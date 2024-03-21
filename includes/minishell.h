@@ -89,7 +89,7 @@ int			handle_quotes(t_pipeline **pipeline);
 void		load_variable(t_variable **variable, char **envp);
 void		free_variable(t_variable **variable);
 char		*ft_getenv(char *name, t_variable **variable);
-/* int			handle_files(t_pipeline **pipeline); */
+int			handle_files(t_pipeline **pipeline);
 
 
 #endif

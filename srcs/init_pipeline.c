@@ -33,8 +33,8 @@ void	load_pipeline(char **line, t_pipeline **pipeline)
 void	init_pipeline(t_pipeline *pipeline)
 {
 	pipeline->line = NULL;
-	pipeline->in_fd = -1;
-	pipeline->out_fd = -1;
+	pipeline->in_fd = -42;
+	pipeline->out_fd = -42;
 	pipeline->here_doc = NULL;
 	pipeline->append = false;
 	pipeline->token = NULL;

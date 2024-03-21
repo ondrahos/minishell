@@ -12,18 +12,22 @@
 
 #include "../includes/minishell.h"
 
-/* void	close_files(t_pipeline *pipeline)
+void	close_files(t_pipeline *pipeline)
 {
-	if (pipeline->in_fd != STDIN_FILENO)
+	if (pipeline->here_doc)
+		unlink("here_doc");
+	if (pipeline->in_fd != STDIN_FILENO && pipeline->in_fd > 0)
 		close(pipeline->in_fd);
-	if (pipeline->out_fd != STDOUT_FILENO)
+	if (pipeline->out_fd != STDOUT_FILENO && pipeline->out_fd > 0)
 		close(pipeline->out_fd);
 }
- */
+
 void	free_variable(t_variable **variable)
 {
 	t_variable	*tmp;
 
+	if (!variable || !(*variable))
+		return ;
 	tmp = *variable;
 	while (tmp)
 	{
@@ -81,7 +85,7 @@ void	free_pipeline(t_pipeline **pipeline)
 	while (*pipeline)
 	{
 		free_array((*pipeline)->line);
-		/* close_files(*pipeline); */
+		close_files(*pipeline);
 		free_tokens(&(*pipeline)->token);
 		tmp = (*pipeline)->next;
 		free(*pipeline);

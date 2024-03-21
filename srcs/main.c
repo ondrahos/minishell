@@ -64,7 +64,7 @@ void	print_pipeline(t_pipeline **pipeline)
 	}
 }
 
-/* void	print_variable(t_variable **variable)
+void	print_variable(t_variable **variable)
 {
 	t_variable	*tmp;
 
@@ -75,7 +75,7 @@ void	print_pipeline(t_pipeline **pipeline)
 		printf("VALUE: %s\n\n", tmp->value);
 		tmp = tmp->next;
 	}
-} */
+}
 
 
 void	parser(char *buffer, t_pipeline **pipeline, char **envp, t_variable **variable)
@@ -88,7 +88,7 @@ void	parser(char *buffer, t_pipeline **pipeline, char **envp, t_variable **varia
 	load_variable(variable, envp);
 	/* print_variable(variable); */
 	expansion(pipeline, variable);
-	if (handle_quotes(pipeline) != 0 /* || handle_files(pipeline) != 0 */)
+	if (handle_quotes(pipeline) != 0 || handle_files(pipeline) != 0)
 	{
 		free_array(line);
 		return ;
@@ -104,6 +104,7 @@ int	main(int ac, char **av, char **envp)
 	t_variable	*variable;
 
 	pipeline = NULL;
+	variable = NULL;
 	while(1)
 	{
 		buffer = readline("minishell$ ");
