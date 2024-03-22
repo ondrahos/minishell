@@ -6,7 +6,7 @@
 /*   By: ohosnedl <ohosnedl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/06 14:39:08 by ohosnedl          #+#    #+#             */
-/*   Updated: 2024/03/21 14:14:27 by ohosnedl         ###   ########.fr       */
+/*   Updated: 2024/03/22 13:13:38 by ohosnedl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ void	init_pipeline(t_pipeline *pipeline)
 	pipeline->line = NULL;
 	pipeline->in_fd = -42;
 	pipeline->out_fd = -42;
-	pipeline->here_doc = NULL;
+	pipeline->here_doc = false;
 	pipeline->append = false;
 	pipeline->token = NULL;
 	pipeline->next = NULL;

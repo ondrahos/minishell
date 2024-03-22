@@ -6,7 +6,7 @@
 /*   By: ohosnedl <ohosnedl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/06 15:35:34 by ohosnedl          #+#    #+#             */
-/*   Updated: 2024/03/21 15:16:09 by ohosnedl         ###   ########.fr       */
+/*   Updated: 2024/03/22 13:14:01 by ohosnedl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,19 +57,14 @@ void	assign_type(char **line, t_token **token, t_pipeline *pipeline)
 	t_token	*tmp;
 	int		i;
 	bool	cmd;
-	bool	r_in;
 
 	i = 0;
 	tmp = *token;
 	cmd = false;
-	r_in = false;
 	while (tmp && line[i])
 	{
 		if (ft_strncmp(line[i], "<", 2) == 0)
-		{
 			tmp->type = R_IN;
-			r_in = true;
-		}
 		else if (ft_strncmp(line[i], ">", 2) == 0)
 			tmp->type = R_OUT;
 		else if (ft_strncmp(line[i], ">>", 3) == 0)
@@ -78,14 +73,13 @@ void	assign_type(char **line, t_token **token, t_pipeline *pipeline)
 			pipeline->append = true;
 		}
 		else if (ft_strncmp(line[i], "<<", 3) == 0)
-			tmp->type = HEREDOC;
-		else if (i > 0 && ft_strncmp(line[i - 1], "<<", 3) == 0)
 		{
-			tmp->type = DELIMITER;
-			pipeline->here_doc = line[i];
+			tmp->type = HEREDOC;
+			pipeline->here_doc = true;
 		}
-		else if ((line[i + 1] && ft_strncmp(line[i + 1], "<", 2) == 0 && r_in)
-				|| (i > 0 && ft_strncmp(line[i - 1], "<", 2) == 0 && r_in))
+		else if (i > 0 && ft_strncmp(line[i - 1], "<<", 3) == 0)
+			tmp->type = DELIMITER;
+		else if (i > 0 && ft_strncmp(line[i - 1], "<", 2) == 0)
 			tmp->type = IN_FILE;
 		else if ((i > 0 && ft_strncmp(line[i - 1], ">", 2) == 0)
 				|| (i > 0 && ft_strncmp(line[i - 1], ">>", 3) == 0))

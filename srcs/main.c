@@ -6,7 +6,7 @@
 /*   By: ohosnedl <ohosnedl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/28 12:36:53 by ohosnedl          #+#    #+#             */
-/*   Updated: 2024/03/21 16:02:33 by ohosnedl         ###   ########.fr       */
+/*   Updated: 2024/03/22 16:20:19 by ohosnedl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,7 +55,7 @@ void	print_pipeline(t_pipeline **pipeline)
 	printf("--------------------------------------------------------------------------------------------------\n");
 	while (tmp)
 	{
-		printf("Here_doc: %s\n", tmp->here_doc);
+		printf("Here_doc: %d\n", tmp->here_doc);
 		printf("Append: %d\n\n", tmp->append);
 		printf("Infile: %i\n", tmp->in_fd);
 		printf("Outfile: %i\n\n", tmp->out_fd);
@@ -78,14 +78,18 @@ void	print_variable(t_variable **variable)
 }
 
 
-void	parser(char *buffer, t_pipeline **pipeline, char **envp, t_variable **variable)
+void	parser(char *buffer, t_pipeline **pipeline, t_variable **variable)
 {
 	char		**line;
 
 	line = ft_split(buffer, '|');
 	load_pipeline(line, pipeline);
 	tokenize_pipeline(pipeline);
-	load_variable(variable, envp);
+	if (check_syntax(pipeline) != 0 || check_pipes(buffer) != 0)
+	{
+		free_array(line);
+		return ;
+	}
 	/* print_variable(variable); */
 	expansion(pipeline, variable);
 	if (handle_quotes(pipeline) != 0 || handle_files(pipeline) != 0)
@@ -113,13 +117,16 @@ int	main(int ac, char **av, char **envp)
 			free(buffer);
 			continue ;
 		}
-		if (ft_strncmp(buffer, "exit", 5) == 0)
+		if (ft_strncmp(buffer, "exit", 5) == 0 || buffer == NULL)
 		{
 			free(buffer);
 			buffer = NULL;
 			break ;
 		}
-		parser(buffer, &pipeline, envp, &variable);
+		if (variable == NULL)
+			load_variable(&variable, envp);
+		add_history(buffer);
+		parser(buffer, &pipeline, &variable);
 		free_pipeline(&pipeline);
 		free(buffer);
 		buffer = NULL;

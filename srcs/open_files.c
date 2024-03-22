@@ -6,13 +6,13 @@
 /*   By: ohosnedl <ohosnedl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 16:05:47 by ohosnedl          #+#    #+#             */
-/*   Updated: 2024/03/21 13:50:10 by ohosnedl         ###   ########.fr       */
+/*   Updated: 2024/03/22 13:15:00 by ohosnedl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-int	read_heredoc(t_pipeline *pipeline)
+int	read_heredoc(char *eof)
 {
 	char	*line;
 	int		fd;
@@ -27,7 +27,7 @@ int	read_heredoc(t_pipeline *pipeline)
 	while (1)
 	{
 		line = readline("> ");
-		if (line == NULL || ft_strncmp(line, pipeline->here_doc, ft_strlen(pipeline->here_doc)) == 0)
+		if (line == NULL || ft_strncmp(line, eof,  ft_strlen(eof)) == 0)
 			break ;
 		write(fd, line, ft_strlen(line));
 		free(line);
@@ -38,9 +38,9 @@ int	read_heredoc(t_pipeline *pipeline)
 	return (0);
 }
 
-int	open_heredoc(t_pipeline *pipeline)
+int	open_heredoc(t_pipeline *pipeline, char *eof)
 {
-	if (read_heredoc(pipeline) != 0)
+	if (read_heredoc(eof) != 0)
 	{
 		perror("File ");
 		return (1);
@@ -91,14 +91,14 @@ int	handle_files(t_pipeline **pipeline)
 	while (tmp_pipe)
 	{
 		tmp_token = tmp_pipe->token;
-		if (tmp_pipe->here_doc != NULL)
-		{
-			if (open_heredoc(tmp_pipe) != 0)
-				return (1);
-		}
 		while (tmp_token)
 		{
-			if (tmp_token->type == IN_FILE)
+			if (tmp_token->type == HEREDOC)
+			{
+				if (open_heredoc(tmp_pipe, tmp_token->next->value) != 0)
+					return (1);
+			}
+			else if (tmp_token->type == IN_FILE)
 			{
 				if (open_infile(tmp_pipe, tmp_token->value) != 0)
 					return (1);

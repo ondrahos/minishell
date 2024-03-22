@@ -6,7 +6,7 @@
 /*   By: ohosnedl <ohosnedl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 14:57:32 by ohosnedl          #+#    #+#             */
-/*   Updated: 2024/03/21 15:17:16 by ohosnedl         ###   ########.fr       */
+/*   Updated: 2024/03/22 16:33:22 by ohosnedl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include "libft/libft.h"
 # include <readline/readline.h>
+# include <readline/history.h>
 # include <stdlib.h>
 # include <sys/wait.h>
 # include <unistd.h>
@@ -58,7 +59,7 @@ typedef struct	s_pipeline
 	char				**line;
 	int					in_fd;
 	int					out_fd;
-	char				*here_doc;
+	bool				here_doc;
 	bool				append;
 	t_token				*token;
 	struct s_pipeline	*next;
@@ -90,6 +91,8 @@ void		load_variable(t_variable **variable, char **envp);
 void		free_variable(t_variable **variable);
 char		*ft_getenv(char *name, t_variable **variable);
 int			handle_files(t_pipeline **pipeline);
+int			check_pipes(char *line);
+int			check_syntax(t_pipeline **pipeline);
 
 
 #endif
