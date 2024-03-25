@@ -34,9 +34,15 @@ int	check_pipes(char *line)
 	return (0);
 }
 
-bool	is_invalid(t_type next)
+bool	is_invalid(t_token *next)
 {
-	return (next == R_IN || next == R_OUT || next == APPEND || next == HEREDOC);
+	if (!next)
+		return (true);
+	else if (next->type == R_IN || next->type == R_OUT
+			|| next->type == APPEND || next->type == HEREDOC)
+		return (true);
+	else
+		return (false);
 }
 
 int	check_syntax(t_pipeline **pipeline)
@@ -50,22 +56,22 @@ int	check_syntax(t_pipeline **pipeline)
 		tmp_token = tmp_pipe->token;
 		while (tmp_token)
 		{
-			if (tmp_token->type == R_IN && is_invalid(tmp_token->next->type))
+			if (tmp_token->type == R_IN && is_invalid(tmp_token->next))
 			{
 				ft_putendl_fd("Syntax error: Invalid syntax near: \"<\"", STDERR_FILENO);
 				return (1);
 			}
-			else if (tmp_token->type == R_OUT && is_invalid(tmp_token->next->type))
+			else if (tmp_token->type == R_OUT && is_invalid(tmp_token->next))
 			{
 				ft_putendl_fd("Syntax error: Invalid syntax near: \">\"", STDERR_FILENO);
 				return (1);
 			}
-			else if (tmp_token->type == APPEND && is_invalid(tmp_token->next->type))
+			else if (tmp_token->type == APPEND && is_invalid(tmp_token->next))
 			{
 				ft_putendl_fd("Syntax error: Invalid syntax near: \">>\"", STDERR_FILENO);
 				return (1);
 			}
-			else if (tmp_token->type == HEREDOC && is_invalid(tmp_token->next->type))
+			else if (tmp_token->type == HEREDOC && is_invalid(tmp_token->next))
 			{
 				ft_putendl_fd("Syntax error: Invalid syntax near: \"<<\"", STDERR_FILENO);
 				return (1);

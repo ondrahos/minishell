@@ -95,5 +95,4 @@ int			check_pipes(char *line);
 int			check_syntax(t_pipeline **pipeline);
 bool		is_quote(char c);
 
-
 #endif

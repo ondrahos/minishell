@@ -27,8 +27,11 @@ bool	is_var(char *value)
 	i = 0;
 	while (value[i])
 	{
-		if (value[0] != '\'' && value[ft_strlen(value) - 1] != '\'' && value[i] == '$' )
-			return (true);
+		if (value[i] == '$')
+		{
+			if ((i > 0 && value[i - 1] != '\'') || i == 0)
+				return (true);
+		}
 		i++;
 	}
 	return (false);
@@ -78,11 +81,30 @@ char	*get_var(char *value, t_variable **variable)
 	return (ret);
 }
 
+int	get_name_len(char *s)
+{
+	int	i;
+	int	len;
+
+	i = 0;
+	len = 0;
+	while (s[i] != '$')
+		i++;
+	i++;
+	while (s[i] && is_alphanum(s[i]))
+	{
+		len++;
+		i++;
+	}
+	return (len);
+}
+
 void	expand_var(t_token *token, t_variable **variable)
 {
 	char	*var;
 	int		beg;
 	int		end;
+	int		name_len;
 	char	*tmp;
 	int		i;
 	int		j;
@@ -90,6 +112,7 @@ void	expand_var(t_token *token, t_variable **variable)
 	i = 0;
 	j = 0;
 	var = get_var(token->value, variable);
+	name_len = get_name_len(token->value);
 	while (token->value[i] != '$')
 		i++;
 	beg = i++;
@@ -100,9 +123,9 @@ void	expand_var(t_token *token, t_variable **variable)
 			i++;
 	end = i;
 	if (var)
-		tmp = (char *)malloc(end + beg + ft_strlen(var) + 1);
+		tmp = (char *)malloc(ft_strlen(token->value) - name_len + ft_strlen(var) + 1);
 	else
-		tmp = (char *)malloc(end + beg + 1);
+		tmp = (char *)malloc(ft_strlen(token->value) - name_len + 1);
 	if (!tmp)
 	{
 		perror("Malloc ");

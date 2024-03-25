@@ -41,6 +41,7 @@ int	count_tokens(char *s)
 					return (-1);
 				if (s[i] && is_quote(s[++i]))
 					continue ;
+				tokens++;
 			}
 			else if (s[i] == '\"')
 			{
@@ -51,6 +52,7 @@ int	count_tokens(char *s)
 					return (-1);
 				if (s[i] && is_quote(s[++i]))
 					continue ;
+				tokens++;
 			}
 			else if (is_heredoc(s + i))
 			{
@@ -64,9 +66,12 @@ int	count_tokens(char *s)
 				i++;
 				break ;
 			}
-			if (inside_token == false)
-				tokens++;
-			inside_token = true;
+			else
+			{
+				if (inside_token == false)
+					tokens++;
+				inside_token = true;
+			}
 			if (s[i])
 				i++;
 		}
@@ -132,6 +137,9 @@ char	**splitter(char *s)
 				len++;
 				break ;
 			}
+			while (s[len] && !is_delimiter(&s[len]))
+					len++;
+			break ;
 		}
 		ret[i] = ft_substr(s, 0, len);
 		if (!ret[i])

@@ -117,6 +117,8 @@ void	remove_quotes(t_token *token)
 			i++;
 	}
 	new[j] = '\0';
+	if (token->free == true)
+		free(token->value);
 	token->value = new;
 	token->free = true;
 }
