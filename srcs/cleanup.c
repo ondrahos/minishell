@@ -47,6 +47,8 @@ void	free_array(char **arr)
 	int	i;
 
 	i = 0;
+	if (!arr)
+		return ;
 	while (arr[i])
 	{
 		if (arr[i] != NULL)

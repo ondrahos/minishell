@@ -83,20 +83,15 @@ void	parser(char *buffer, t_pipeline **pipeline, t_variable **variable)
 	char		**line;
 
 	line = ft_split(buffer, '|');
-	load_pipeline(line, pipeline);
+	if (load_pipeline(line, pipeline) != 0)
+		return (free_array(line));
 	tokenize_pipeline(pipeline);
 	if (check_syntax(pipeline) != 0 || check_pipes(buffer) != 0)
-	{
-		free_array(line);
-		return ;
-	}
+		return (free_array(line));
 	//print_variable(variable);
 	expansion(pipeline, variable);
-	if (handle_quotes(pipeline) != 0 || handle_files(pipeline) != 0)
-	{
-		free_array(line);
-		return ;
-	}
+	if (handle_files(pipeline) != 0 || handle_quotes(pipeline) != 0)
+		return (free_array(line));
 	print_pipeline(pipeline);
 	free_array(line);
 }

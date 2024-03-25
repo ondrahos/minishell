@@ -12,62 +12,18 @@
 
 #include "../includes/minishell.h"
 
-int	has_quotes(char *s)
+bool	has_quotes(char *s)
 {
 	int	i;
 
 	i = 0;
 	while (s[i])
 	{
-		if (s[i] == '\"')
-			return (2);
-		else if (s[i] == '\'')
-			return (1);
+		if (s[i] == '\"' || s[i] == '\'')
+			return (true);
 		i++;
 	}
-	return (0);
-}
-
-bool	check_dquotes(char *s)
-{
-	int	i;
-	int	count;
-
-	i = 0;
-	count = 0;
-	while (s[i])
-	{
-		if (s[i] == '\"')
-			count++;
-		else if (s[i] == '\'' && count % 2 != 0)
-			return (false);
-		i++;
-	}
-	if (count % 2 != 0)
-		return (false);
-	else
-		return (true);
-}
-
-bool	check_squotes(char *s)
-{
-	int	i;
-	int	count;
-
-	i = 0;
-	count = 0;
-	while (s[i])
-	{
-		if (s[i] == '\'')
-			count++;
-		else if (s[i] == '\"' && count % 2 != 0)
-			return (false);
-		i++;
-	}
-	if (count % 2 != 0)
-		return (false);
-	else
-		return (true);
+	return (false);
 }
 
 char	*allocate_quotefree(char *s)
@@ -80,13 +36,31 @@ char	*allocate_quotefree(char *s)
 	len = 0;
 	while (s[i])
 	{
-		if (s[i] == '\"' || s[i] == '\'')
-			i++;
-		else
+		while (s[i] && !is_quote(s[i]))
 		{
 			len++;
 			i++;
 		}
+		if (s[i] == '\'')
+		{
+			i++;
+			while (s[i] != '\'')
+			{
+				i++;
+				len++;
+			}
+		}
+		else if (s[i] == '\"')
+		{
+			i++;
+			while (s[i] != '\"')
+			{
+				i++;
+				len++;
+			}
+		}
+		if (s[i])
+			i++;
 	}
 	new = (char *)malloc((len + 1) * sizeof(char));
 	if (!new)
@@ -113,14 +87,34 @@ void	remove_quotes(t_token *token)
 	}
 	while (token->value[i])
 	{
-		if (token->value[i] == '\"' || token->value[i] == '\'')
-			i++;
-		else
+		while (token->value[i] && !is_quote(token->value[i]))
 		{
 			new[j] = token->value[i];
 			i++;
 			j++;
 		}
+		if (token->value[i] == '\"')
+		{
+			i++;
+			while (token->value[i] != '\"')
+			{
+				new[j] = token->value[i];
+				j++;
+				i++;
+			}
+		}
+		else if (token->value[i] == '\'')
+		{
+			i++;
+			while (token->value[i] != '\'')
+			{
+				new[j] = token->value[i];
+				j++;
+				i++;
+			}
+		}
+		if (token->value[i])
+			i++;
 	}
 	new[j] = '\0';
 	token->value = new;
@@ -131,16 +125,8 @@ int	check_quotes(t_token *token)
 {
 	if (!token->value)
 		return (0);
-	if (has_quotes(token->value) == 2)
+	if (has_quotes(token->value))
 	{
-		if (!check_dquotes(token->value))
-			return (1);
-		remove_quotes(token);
-	}
-	else if (has_quotes(token->value) == 1)
-	{
-		if (!check_squotes(token->value))
-			return (1);
 		remove_quotes(token);
 	}
 	return (0);
@@ -157,7 +143,7 @@ int	handle_quotes(t_pipeline **pipeline)
 		tmp_token = tmp_pipe->token;
 		while (tmp_token)
 		{
-			if (check_quotes(tmp_token) != 0)
+			if(check_quotes(tmp_token) != 0)
 			{
 				ft_putendl_fd("Syntax error: Unclosed quotes", STDERR_FILENO);
 				return (1);
@@ -168,4 +154,3 @@ int	handle_quotes(t_pipeline **pipeline)
 	}
 	return (0);
 }
-

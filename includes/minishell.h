@@ -67,7 +67,7 @@ typedef struct	s_pipeline
 
 t_pipeline	*new_pipeline(void);
 void		init_pipeline(t_pipeline *pipeline);
-void		load_pipeline(char **line, t_pipeline **pipeline);
+int			load_pipeline(char **line, t_pipeline **pipeline);
 void		tokenize_pipeline(t_pipeline **pipeline);
 void		free_pipeline(t_pipeline **pipeline);
 void		free_array(char **arr);
@@ -93,6 +93,7 @@ char		*ft_getenv(char *name, t_variable **variable);
 int			handle_files(t_pipeline **pipeline);
 int			check_pipes(char *line);
 int			check_syntax(t_pipeline **pipeline);
+bool		is_quote(char c);
 
 
 #endif

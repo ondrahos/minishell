@@ -12,7 +12,7 @@
 
 #include "../includes/minishell.h"
 
-void	load_pipeline(char **line, t_pipeline **pipeline)
+int	load_pipeline(char **line, t_pipeline **pipeline)
 {
 	int			i;
 	t_pipeline	*tmp;
@@ -23,11 +23,14 @@ void	load_pipeline(char **line, t_pipeline **pipeline)
 	while (line[i])
 	{
 		tmp->line = splitter(line[i]);
+		if (tmp->line == NULL)
+			return (1);
 		if (line[i + 1])
 			tmp->next = new_pipeline();
 		tmp = tmp->next;
 		i++;
 	}
+	return (0);
 }
 
 void	init_pipeline(t_pipeline *pipeline)

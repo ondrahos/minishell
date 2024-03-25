@@ -37,20 +37,20 @@ int	count_tokens(char *s)
 				i++;
 				while (s[i] && s[i] != '\'')
 					i++;
-				if (is_quote(s[++i]))
+				if (s[i] == '\0')
+					return (-1);
+				if (s[i] && is_quote(s[++i]))
 					continue ;
-				tokens++;
-				break ;
 			}
 			else if (s[i] == '\"')
 			{
 				i++;
 				while (s[i] && s[i] != '\"')
 					i++;
-				if (is_quote(s[++i]))
+				if (s[i] == '\0')
+					return (-1);
+				if (s[i] && is_quote(s[++i]))
 					continue ;
-				tokens++;
-				break ;
 			}
 			else if (is_heredoc(s + i))
 			{
@@ -67,7 +67,8 @@ int	count_tokens(char *s)
 			if (inside_token == false)
 				tokens++;
 			inside_token = true;
-			i++;
+			if (s[i])
+				i++;
 		}
 	}
 	return (tokens);
@@ -84,7 +85,11 @@ char	**splitter(char *s)
 		return (NULL);
 	i = 0;
 	tokens = count_tokens(s);
-	printf("%d\n", tokens);
+	if (tokens == -1)
+	{
+		ft_putendl_fd("Syntax error: Unclosed quotes", STDERR_FILENO);
+		return (NULL);
+	}
 	ret = (char **)malloc((tokens + 1) * sizeof(char *));
 	if (!ret)
 	{
@@ -99,6 +104,8 @@ char	**splitter(char *s)
 			s++;
 		while (s[len] && !is_whitespace(s[len]))
 		{
+			while (s[len] && !is_delimiter(&s[len]))
+					len++;
 			if (s[len] == '\'')
 			{
 				len++;
@@ -106,7 +113,6 @@ char	**splitter(char *s)
 					len++;
 				if (is_quote(s[++len]))
 					continue ;
-				break ;
 			}
 			else if (s[len] == '\"')
 			{
@@ -115,7 +121,6 @@ char	**splitter(char *s)
 					len++;
 				if (is_quote(s[++len]))
 					continue ;
-				break ;
 			}
 			else if (is_heredoc(s + len))
 			{
@@ -126,12 +131,6 @@ char	**splitter(char *s)
 			{
 				len++;
 				break ;
-			}
-			else
-			{
-				while (s[len] && !is_delimiter(&s[len]))
-					len++;
-				break;
 			}
 		}
 		ret[i] = ft_substr(s, 0, len);

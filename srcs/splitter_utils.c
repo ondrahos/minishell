@@ -37,7 +37,6 @@ bool	is_delimiter(char *s)
 {
 	if (*s == ' ' || (*s >= 9 && *s <= 11))
 		return (true);
-
 	else if (*s == '>' || *s == '<')
 		return (true);
 	else if (*s == '\'' || *s == '\"')
