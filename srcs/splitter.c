@@ -12,6 +12,11 @@
 
 #include "../includes/minishell.h"
 
+bool	is_quote(char c)
+{
+	return (c == '\'' || c == '\"');
+}
+
 int	count_tokens(char *s)
 {
 	size_t		i;
@@ -32,8 +37,9 @@ int	count_tokens(char *s)
 				i++;
 				while (s[i] && s[i] != '\'')
 					i++;
+				if (is_quote(s[++i]))
+					continue ;
 				tokens++;
-				i++;
 				break ;
 			}
 			else if (s[i] == '\"')
@@ -41,8 +47,9 @@ int	count_tokens(char *s)
 				i++;
 				while (s[i] && s[i] != '\"')
 					i++;
+				if (is_quote(s[++i]))
+					continue ;
 				tokens++;
-				i++;
 				break ;
 			}
 			else if (is_heredoc(s + i))
@@ -77,6 +84,7 @@ char	**splitter(char *s)
 		return (NULL);
 	i = 0;
 	tokens = count_tokens(s);
+	printf("%d\n", tokens);
 	ret = (char **)malloc((tokens + 1) * sizeof(char *));
 	if (!ret)
 	{
@@ -89,28 +97,42 @@ char	**splitter(char *s)
 		len = 0;
 		while (*s && is_whitespace(*s))
 			s++;
-		if (s[len] == '\'')
+		while (s[len] && !is_whitespace(s[len]))
 		{
-			len++;
-			while (s[len] && s[len] != '\'')
+			if (s[len] == '\'')
+			{
 				len++;
-			len++;
-		}
-		else if (s[len] == '\"')
-		{
-			len++;
-			while (s[len] && s[len] != '\"')
+				while (s[len] && s[len] != '\'')
+					len++;
+				if (is_quote(s[++len]))
+					continue ;
+				break ;
+			}
+			else if (s[len] == '\"')
+			{
 				len++;
-			len++;
-		}
-		else if (is_heredoc(&s[len]))
-			len += 2;
-		else if (is_redir(s[len]))
-			len++;
-		else
-		{
-			while (s[len] && !is_delimiter(&s[len]))
+				while (s[len] && s[len] != '\"')
+					len++;
+				if (is_quote(s[++len]))
+					continue ;
+				break ;
+			}
+			else if (is_heredoc(s + len))
+			{
+				len += 2;
+				break ;
+			}
+			else if (is_redir(s[len]))
+			{
 				len++;
+				break ;
+			}
+			else
+			{
+				while (s[len] && !is_delimiter(&s[len]))
+					len++;
+				break;
+			}
 		}
 		ret[i] = ft_substr(s, 0, len);
 		if (!ret[i])

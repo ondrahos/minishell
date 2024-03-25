@@ -12,12 +12,12 @@
 
 #include "../includes/minishell.h"
 
-bool	is_inside_var(char c)
+bool	is_alphanum(char c)
 {
 	if ((c <= 'Z' && c >= 'A') || (c <= 'z' && c >= 'a')
 		|| (c >= '0' && c <= '9') || c == '_')
-		return (1);
-	return (0);
+		return (true);
+	return (false);
 }
 
 bool	is_var(char *value)
@@ -61,13 +61,15 @@ char	*get_var(char *value, t_variable **variable)
 	while (value[i] != '$')
 		i++;
 	i++;
+	if (value[i] == '?')
+		return (ft_getenv("?", variable));
 	var_name = (char *)malloc(get_size(value + i) + 1);
 	if (!var_name)
 	{
 		perror("Malloc ");
 		return (NULL);
 	}
-	while (value[i] && is_inside_var(value[i]))
+	while (value[i] && is_alphanum(value[i]))
 		var_name[j++] = value[i++];
 	var_name[j] = '\0';
 	ret = ft_getenv(var_name, variable);
@@ -91,8 +93,11 @@ void	expand_var(t_token *token, t_variable **variable)
 	while (token->value[i] != '$')
 		i++;
 	beg = i++;
-	while (token->value[i] && is_inside_var(token->value[i]))
+	if (token->value[i] == '?')
 		i++;
+	else
+		while (token->value[i] && is_alphanum(token->value[i]))
+			i++;
 	end = i;
 	if (var)
 		tmp = (char *)malloc(end + beg + ft_strlen(var) + 1);

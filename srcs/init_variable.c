@@ -82,14 +82,26 @@ t_variable	*new_variable()
 	return(new);
 }
 
+t_variable	*add_exitstatus()
+{
+	t_variable	*new;
+
+	new = new_variable();
+	new->name = ft_strdup("?");
+	new->value = ft_strdup("0");
+	return (new);
+}
+
 void	load_variable(t_variable **variable, char **envp)
 {
 	int			i;
 	t_variable	*tmp;
 
 	i = 0;
-	*variable = new_variable();
+	*variable = add_exitstatus();
 	tmp = *variable;
+	tmp->next = new_variable();
+	tmp = tmp->next;
 	while (envp[i])
 	{
 		tmp->name = get_var_name(envp[i]);
@@ -100,3 +112,4 @@ void	load_variable(t_variable **variable, char **envp)
 		i++;
 	}
 }
+

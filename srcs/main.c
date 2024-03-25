@@ -90,7 +90,7 @@ void	parser(char *buffer, t_pipeline **pipeline, t_variable **variable)
 		free_array(line);
 		return ;
 	}
-	/* print_variable(variable); */
+	//print_variable(variable);
 	expansion(pipeline, variable);
 	if (handle_quotes(pipeline) != 0 || handle_files(pipeline) != 0)
 	{
@@ -111,7 +111,7 @@ int	main(int ac, char **av, char **envp)
 	variable = NULL;
 	while(1)
 	{
-		buffer = readline("minishell$ ");
+		buffer = readline("$ minishell> ");
 		if (ft_strncmp(buffer, "", 2) == 0)
 		{
 			free(buffer);
