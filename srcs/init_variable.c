@@ -1,65 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   load_variables.c                                   :+:      :+:    :+:   */
+/*   init_variable.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ohosnedl <ohosnedl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/20 16:03:25 by ohosnedl          #+#    #+#             */
-/*   Updated: 2024/03/20 16:43:15 by ohosnedl         ###   ########.fr       */
+/*   Updated: 2024/03/27 16:45:38 by ohosnedl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
-
-char	*get_var_value(char *envp)
-{
-	char	*value;
-	int		i;
-
-	i = 0;
-	while (*envp != '=')
-		envp++;
-	envp++;
-	value = (char *)malloc(ft_strlen(envp) + 1);
-	if (!value)
-	{
-		perror("Malloc ");
-		return (NULL);
-	}
-	while (envp[i])
-	{
-		value[i] = envp[i];
-		i++;
-	}
-	value[i] = '\0';
-	return (value);
-}
-
-char	*get_var_name(char *envp)
-{
-	int		i;
-	int		j;
-	char	*name;
-
-	i = 0;
-	j = 0;
-	while (envp[i] != '=')
-		i++;
-	name = (char *)malloc((i + 1) * sizeof(char));
-	if (!name)
-	{
-		perror("Malloc ");
-		return (NULL);
-	}
-	while (j < i)
-	{
-		name[j] = envp[j];
-		j++;
-	}
-	name[j] = '\0';
-	return (name);
-}
 
 void	init_variable(t_variable *variable)
 {
@@ -68,7 +19,7 @@ void	init_variable(t_variable *variable)
 	variable->next = NULL;
 }
 
-t_variable	*new_variable()
+t_variable	*new_variable(void)
 {
 	t_variable	*new;
 
@@ -79,10 +30,10 @@ t_variable	*new_variable()
 		return (NULL);
 	}
 	init_variable(new);
-	return(new);
+	return (new);
 }
 
-t_variable	*add_exitstatus()
+t_variable	*add_exitstatus(void)
 {
 	t_variable	*new;
 
@@ -112,4 +63,3 @@ void	load_variable(t_variable **variable, char **envp)
 		i++;
 	}
 }
-

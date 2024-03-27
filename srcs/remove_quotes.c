@@ -6,24 +6,32 @@
 /*   By: ohosnedl <ohosnedl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/19 14:53:53 by ohosnedl          #+#    #+#             */
-/*   Updated: 2024/03/20 14:08:47 by ohosnedl         ###   ########.fr       */
+/*   Updated: 2024/03/27 17:22:00 by ohosnedl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-bool	has_quotes(char *s)
+void	skip_quotes(char *s, int *i, int *len)
 {
-	int	i;
-
-	i = 0;
-	while (s[i])
+	if (s[(*i)] == '\'')
 	{
-		if (s[i] == '\"' || s[i] == '\'')
-			return (true);
-		i++;
+		(*i)++;
+		while (s[(*i)] != '\'')
+		{
+			(*i)++;
+			(*len)++;
+		}
 	}
-	return (false);
+	else if (s[(*i)] == '\"')
+	{
+		(*i)++;
+		while (s[(*i)] != '\"')
+		{
+			(*i)++;
+			(*len)++;
+		}
+	}
 }
 
 char	*allocate_quotefree(char *s)
@@ -41,24 +49,7 @@ char	*allocate_quotefree(char *s)
 			len++;
 			i++;
 		}
-		if (s[i] == '\'')
-		{
-			i++;
-			while (s[i] != '\'')
-			{
-				i++;
-				len++;
-			}
-		}
-		else if (s[i] == '\"')
-		{
-			i++;
-			while (s[i] != '\"')
-			{
-				i++;
-				len++;
-			}
-		}
+		skip_quotes(s, &i, &len);
 		if (s[i])
 			i++;
 	}
@@ -71,6 +62,30 @@ char	*allocate_quotefree(char *s)
 	return (new);
 }
 
+void	process_quotes(t_token *token, int *i, int *j, char *new)
+{
+	if (token->value[(*i)] == '\"')
+	{
+		(*i)++;
+		while (token->value[(*i)] != '\"')
+		{
+			new[(*j)] = token->value[(*i)];
+			(*j)++;
+			(*i)++;
+		}
+	}
+	else if (token->value[(*i)] == '\'')
+	{
+		(*i)++;
+		while (token->value[(*i)] != '\'')
+		{
+			new[(*j)] = token->value[(*i)];
+			(*j)++;
+			(*i)++;
+		}
+	}
+}
+
 void	remove_quotes(t_token *token)
 {
 	char	*new;
@@ -81,10 +96,7 @@ void	remove_quotes(t_token *token)
 	j = 0;
 	new = allocate_quotefree(token->value);
 	if (!new)
-	{
-		perror("Malloc ");
-		return ;
-	}
+		return (perror("Malloc "));
 	while (token->value[i])
 	{
 		while (token->value[i] && !is_quote(token->value[i]))
@@ -93,45 +105,12 @@ void	remove_quotes(t_token *token)
 			i++;
 			j++;
 		}
-		if (token->value[i] == '\"')
-		{
-			i++;
-			while (token->value[i] != '\"')
-			{
-				new[j] = token->value[i];
-				j++;
-				i++;
-			}
-		}
-		else if (token->value[i] == '\'')
-		{
-			i++;
-			while (token->value[i] != '\'')
-			{
-				new[j] = token->value[i];
-				j++;
-				i++;
-			}
-		}
+		process_quotes(token, &i, &j, new);
 		if (token->value[i])
 			i++;
 	}
 	new[j] = '\0';
-	if (token->free == true)
-		free(token->value);
-	token->value = new;
-	token->free = true;
-}
-
-int	check_quotes(t_token *token)
-{
-	if (!token->value)
-		return (0);
-	if (has_quotes(token->value))
-	{
-		remove_quotes(token);
-	}
-	return (0);
+	replace_value(new, token, token->free, NULL);
 }
 
 int	handle_quotes(t_pipeline **pipeline)
@@ -145,7 +124,7 @@ int	handle_quotes(t_pipeline **pipeline)
 		tmp_token = tmp_pipe->token;
 		while (tmp_token)
 		{
-			if(check_quotes(tmp_token) != 0)
+			if (check_quotes(tmp_token) != 0)
 			{
 				ft_putendl_fd("Syntax error: Unclosed quotes", STDERR_FILENO);
 				return (1);

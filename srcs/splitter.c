@@ -6,7 +6,7 @@
 /*   By: ohosnedl <ohosnedl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/26 13:34:58 by ohosnedl          #+#    #+#             */
-/*   Updated: 2024/03/19 15:46:02 by ohosnedl         ###   ########.fr       */
+/*   Updated: 2024/03/27 17:42:07 by ohosnedl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,9 @@ int	count_tokens(char *s)
 					return (-1);
 				if (s[i] && is_quote(s[++i]))
 					continue ;
-				tokens++;
+				if (!inside_token)
+					tokens++;
+				inside_token = true;
 			}
 			else if (s[i] == '\"')
 			{
@@ -52,7 +54,9 @@ int	count_tokens(char *s)
 					return (-1);
 				if (s[i] && is_quote(s[++i]))
 					continue ;
-				tokens++;
+				if (!inside_token)
+					tokens++;
+				inside_token = true;
 			}
 			else if (is_heredoc(s + i))
 			{
@@ -71,9 +75,9 @@ int	count_tokens(char *s)
 				if (inside_token == false)
 					tokens++;
 				inside_token = true;
+				if (s[i])
+					i++;
 			}
-			if (s[i])
-				i++;
 		}
 	}
 	return (tokens);
@@ -109,8 +113,6 @@ char	**splitter(char *s)
 			s++;
 		while (s[len] && !is_whitespace(s[len]))
 		{
-			while (s[len] && !is_delimiter(&s[len]))
-					len++;
 			if (s[len] == '\'')
 			{
 				len++;
@@ -137,9 +139,8 @@ char	**splitter(char *s)
 				len++;
 				break ;
 			}
-			while (s[len] && !is_delimiter(&s[len]))
-					len++;
-			break ;
+			else
+				len++;
 		}
 		ret[i] = ft_substr(s, 0, len);
 		if (!ret[i])

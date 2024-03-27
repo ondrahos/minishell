@@ -6,7 +6,7 @@
 /*   By: ohosnedl <ohosnedl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 14:57:32 by ohosnedl          #+#    #+#             */
-/*   Updated: 2024/03/22 16:33:22 by ohosnedl         ###   ########.fr       */
+/*   Updated: 2024/03/27 17:06:22 by ohosnedl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
 # include <stdbool.h>
 # include <fcntl.h>
 
-typedef enum	e_type
+typedef enum e_type
 {
 	COMMAND = 1,
 	ARGUMENT = 2,
@@ -44,8 +44,7 @@ typedef struct s_variable
 	struct s_variable	*next;
 }	t_variable;
 
-
-typedef struct	s_token
+typedef struct s_token
 {
 	int				type;
 	char			*value;
@@ -53,8 +52,7 @@ typedef struct	s_token
 	struct s_token	*next;
 }	t_token;
 
-
-typedef struct	s_pipeline
+typedef struct s_pipeline
 {
 	char				**line;
 	int					in_fd;
@@ -65,6 +63,17 @@ typedef struct	s_pipeline
 	struct s_pipeline	*next;
 }	t_pipeline;
 
+typedef struct s_expand
+{
+	char	*var;
+	int		beg;
+	int		end;
+	int		name_len;
+	char	*tmp;
+	int		i;
+	int		j;
+}	t_expand;
+
 t_pipeline	*new_pipeline(void);
 void		init_pipeline(t_pipeline *pipeline);
 int			load_pipeline(char **line, t_pipeline **pipeline);
@@ -74,9 +83,8 @@ void		free_array(char **arr);
 void		load_token(char **line, t_token **token);
 t_token		*new_token(void);
 void		init_token(t_token *token);
-void		assign_type(char **line, t_token **token,  t_pipeline *s_pipeline);
+void		assign_type(char **line, t_token **token, t_pipeline *s_pipeline);
 void		expansion(t_pipeline **pipeline, t_variable **variable);
-void		expand_var(t_token *token, t_variable **variable);
 char		*get_var(char *value, t_variable **variable);
 int			get_size(char *str);
 bool		is_whitespace(char c);
@@ -94,5 +102,16 @@ int			handle_files(t_pipeline **pipeline);
 int			check_pipes(char *line);
 int			check_syntax(t_pipeline **pipeline);
 bool		is_quote(char c);
+bool		is_in_squotes(char *s, int position);
+bool		is_alphanum(char c);
+int			get_name_len(char *s);
+void		replace_value(char *tmp, t_token *token, bool free_var, char *var);
+char		*allocate_memory(char *var, char *value);
+char		*get_var_name(char *envp);
+char		*get_var_value(char *envp);
+int			open_heredoc(t_pipeline *pipeline, char *eof);
+bool		has_quotes(char *s);
+int			check_quotes(t_token *token);
+void		remove_quotes(t_token *token);
 
 #endif

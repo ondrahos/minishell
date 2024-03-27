@@ -6,105 +6,54 @@
 /*   By: ohosnedl <ohosnedl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/11 14:02:11 by ohosnedl          #+#    #+#             */
-/*   Updated: 2024/03/21 13:36:14 by ohosnedl         ###   ########.fr       */
+/*   Updated: 2024/03/27 16:20:13 by ohosnedl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/minishell.h"
 
-bool	is_alphanum(char c)
-{
-	if ((c <= 'Z' && c >= 'A') || (c <= 'z' && c >= 'a')
-		|| (c >= '0' && c <= '9') || c == '_')
-		return (true);
-	return (false);
-}
-
-bool	is_var(char *value)
+void	copy_beg(char *src, char *dest, int end, int *j)
 {
 	int	i;
 
 	i = 0;
-	while (value[i])
+	while (i != end)
 	{
-		if (value[i] == '$')
-		{
-			if ((i > 0 && value[i - 1] != '\'') || i == 0)
-				return (true);
-		}
+		dest[(*j)] = src[i];
 		i++;
+		(*j)++;
 	}
-	return (false);
 }
 
-bool	is_whitespace(char c)
+void	copy_end(char *src, char *dest, int end, int *j)
 {
-	return (c == ' ' || (c >=  9 && c <= 13));
+	while (src[end])
+	{
+		dest[(*j)] = src[end];
+		end++;
+		(*j)++;
+	}
+	dest[(*j)] = '\0';
 }
 
-int	get_size(char *str)
+void	copy_var(char *src, char *dest, int *j)
 {
 	int	i;
 
 	i = 0;
-	while (str[i] && !is_whitespace(str[i]))
-		i++;
-	return (i);
-}
-
-char	*get_var(char *value, t_variable **variable)
-{
-	int		i;
-	int		j;
-	char	*var_name;
-	char	*ret;
-
-	i = 0;
-	j = 0;
-	while (value[i] != '$')
-		i++;
-	i++;
-	if (value[i] == '?')
-		return (ft_getenv("?", variable));
-	var_name = (char *)malloc(get_size(value + i) + 1);
-	if (!var_name)
+	while (src && src[i])
 	{
-		perror("Malloc ");
-		return (NULL);
+		dest[(*j)] = src[i];
+		i++;
+		(*j)++;
 	}
-	while (value[i] && is_alphanum(value[i]))
-		var_name[j++] = value[i++];
-	var_name[j] = '\0';
-	ret = ft_getenv(var_name, variable);
-	free(var_name);
-	var_name = NULL;
-	return (ret);
 }
 
-int	get_name_len(char *s)
+void	expand_var(t_token *token, t_variable **variable,
+					char *var, bool free_var)
 {
-	int	i;
-	int	len;
-
-	i = 0;
-	len = 0;
-	while (s[i] != '$')
-		i++;
-	i++;
-	while (s[i] && is_alphanum(s[i]))
-	{
-		len++;
-		i++;
-	}
-	return (len);
-}
-
-void	expand_var(t_token *token, t_variable **variable)
-{
-	char	*var;
 	int		beg;
 	int		end;
-	int		name_len;
 	char	*tmp;
 	int		i;
 	int		j;
@@ -112,7 +61,6 @@ void	expand_var(t_token *token, t_variable **variable)
 	i = 0;
 	j = 0;
 	var = get_var(token->value, variable);
-	name_len = get_name_len(token->value);
 	while (token->value[i] != '$')
 		i++;
 	beg = i++;
@@ -122,44 +70,30 @@ void	expand_var(t_token *token, t_variable **variable)
 		while (token->value[i] && is_alphanum(token->value[i]))
 			i++;
 	end = i;
-	if (var)
-		tmp = (char *)malloc(ft_strlen(token->value) - name_len + ft_strlen(var) + 1);
-	else
-		tmp = (char *)malloc(ft_strlen(token->value) - name_len + 1);
+	tmp = allocate_memory(var, token->value);
 	if (!tmp)
-	{
-		perror("Malloc ");
-		return ;
-	}
-	i = 0;
-	while (i != beg)
-		tmp[j++] = token->value[i++];
-	i = 0;
-	while (var && var[i])
-		tmp[j++] = var[i++];
-	while (token->value[end])
-		tmp[j++] = token->value[end++];
-	tmp[j] = '\0';
-	free(var);
-	var = NULL;
-	token->value = tmp;
-	token->free = true;
+		return (perror("Malloc "));
+	copy_beg(token->value, tmp, beg, &j);
+	copy_var(var, tmp, &j);
+	copy_end(token->value, tmp, end, &j);
+	replace_value(tmp, token, free_var, var);
 }
 
 void	expansion(t_pipeline **pipeline, t_variable **variable)
 {
 	t_pipeline	*tmp_pipe;
 	t_token		*tmp_token;
-
+	char		*var;
 
 	tmp_pipe = *pipeline;
+	var = NULL;
 	while (tmp_pipe)
 	{
 		tmp_token = tmp_pipe->token;
 		while (tmp_token)
 		{
-			if (is_var(tmp_token->value))
-				expand_var(tmp_token, variable);
+			while (is_var(tmp_token->value))
+				expand_var(tmp_token, variable, var, tmp_token->free);
 			tmp_token = tmp_token->next;
 		}
 		tmp_pipe = tmp_pipe->next;

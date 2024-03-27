@@ -6,7 +6,7 @@
 /*   By: ohosnedl <ohosnedl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/02/28 12:36:53 by ohosnedl          #+#    #+#             */
-/*   Updated: 2024/03/22 16:20:19 by ohosnedl         ###   ########.fr       */
+/*   Updated: 2024/03/26 16:24:54 by ohosnedl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,7 +77,6 @@ void	print_variable(t_variable **variable)
 	}
 }
 
-
 void	parser(char *buffer, t_pipeline **pipeline, t_variable **variable)
 {
 	char		**line;
@@ -104,7 +103,7 @@ int	main(int ac, char **av, char **envp)
 
 	pipeline = NULL;
 	variable = NULL;
-	while(1)
+	while (1)
 	{
 		buffer = readline("$ minishell> ");
 		if (ft_strncmp(buffer, "", 2) == 0)
@@ -122,6 +121,7 @@ int	main(int ac, char **av, char **envp)
 			load_variable(&variable, envp);
 		add_history(buffer);
 		parser(buffer, &pipeline, &variable);
+		//execute(&pipeline, &variable);
 		free_pipeline(&pipeline);
 		free(buffer);
 		buffer = NULL;

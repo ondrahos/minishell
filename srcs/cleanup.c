@@ -6,7 +6,7 @@
 /*   By: ohosnedl <ohosnedl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/06 15:19:30 by ohosnedl          #+#    #+#             */
-/*   Updated: 2024/03/22 13:34:08 by ohosnedl         ###   ########.fr       */
+/*   Updated: 2024/03/26 16:19:15 by ohosnedl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,7 +64,7 @@ void	free_tokens(t_token **token)
 
 	if (!token || !(*token))
 		return ;
-	while(*token)
+	while (*token)
 	{
 		if ((*token)->free == true)
 		{

@@ -6,7 +6,7 @@
 /*   By: ohosnedl <ohosnedl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/06 14:39:08 by ohosnedl          #+#    #+#             */
-/*   Updated: 2024/03/22 13:13:38 by ohosnedl         ###   ########.fr       */
+/*   Updated: 2024/03/26 16:22:18 by ohosnedl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ void	init_pipeline(t_pipeline *pipeline)
 	pipeline->next = NULL;
 }
 
-t_pipeline	*new_pipeline()
+t_pipeline	*new_pipeline(void)
 {
 	t_pipeline	*new;
 
@@ -55,7 +55,7 @@ t_pipeline	*new_pipeline()
 		return (NULL);
 	}
 	init_pipeline(new);
-	return(new);
+	return (new);
 }
 
 void	tokenize_pipeline(t_pipeline **pipeline)
