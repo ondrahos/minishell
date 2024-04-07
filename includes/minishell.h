@@ -35,7 +35,17 @@ typedef enum e_type
 	HEREDOC = 7,
 	APPEND = 8,
 	DELIMITER = 9,
+	COMMAND_ERR = 10,
+	COMMAND_ERR_PATH = 11
 }	t_type;
+
+typedef struct s_data
+{
+	int		**pipes;
+	int		*pids;
+	int		pipeline_count;
+	char	**envp;
+}	t_data;
 
 typedef struct s_variable
 {
@@ -62,17 +72,6 @@ typedef struct s_pipeline
 	t_token				*token;
 	struct s_pipeline	*next;
 }	t_pipeline;
-
-typedef struct s_expand
-{
-	char	*var;
-	int		beg;
-	int		end;
-	int		name_len;
-	char	*tmp;
-	int		i;
-	int		j;
-}	t_expand;
 
 t_pipeline	*new_pipeline(void);
 void		init_pipeline(t_pipeline *pipeline);
@@ -113,5 +112,12 @@ int			open_heredoc(t_pipeline *pipeline, char *eof);
 bool		has_quotes(char *s);
 int			check_quotes(t_token *token);
 void		remove_quotes(t_token *token);
+int			count_pipelines(t_pipeline **pipeline);
+int			**allocate_pipes(int pipeline_count);
+int			*allocate_pids(int pipeline_count);
+void		close_pipes(t_data data, int pos);
+int			execute(t_pipeline **pipeline, t_data data, int i, t_variable **variable);
+void		print_array(char **arr);
+void		close_all_pipes(int **pipes, int num);
 
 #endif
