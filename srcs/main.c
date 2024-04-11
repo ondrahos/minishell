@@ -77,6 +77,56 @@ void	print_variable(t_variable **variable)
 	}
 }
 
+void	executer(t_pipeline **pipeline, t_variable **variable, char **envp)
+{
+	t_data	data;
+	int		i;
+
+	i = 0;
+	data.pipeline_count = count_pipelines(pipeline) - 1;
+	data.pipes = allocate_pipes(data.pipeline_count);
+	data.pids = allocate_pids(data.pipeline_count);
+	data.envp = envp;
+	if (data.pipeline_count == 0)
+	{
+		//execute_one(pipeline, data, i, variable);
+	}
+	while (i < data.pipeline_count)
+	{
+		if (pipe(data.pipes[i]) < 0)
+			return (perror("Pipe "));
+		i++;
+	}
+	i = 0;
+	while (i < data.pipeline_count + 1)
+	{
+		data.pids[i] = fork();
+		if (data.pids[i] < 0)
+			return (perror("Fork "));
+		if (data.pids[i] == 0)
+		{
+			if (handle_files(pipeline) != 0)
+				return ;
+			if (i != data.pipeline_count)
+				dup2(data.pipes[i][1], STDOUT_FILENO);
+			if (i != 0)
+				dup2(data.pipes[i - 1][0], STDIN_FILENO);
+			close_all_pipes(data.pipes, data.pipeline_count - 1);
+			execute(pipeline, data, i, variable);
+			perror("Exec ");
+			break ;
+		}
+		i++;
+	}
+	close_all_pipes(data.pipes, data.pipeline_count - 1);
+	i = 0;
+	while (i < data.pipeline_count)
+	{
+		wait(NULL);
+		i++;
+	}
+}
+
 void	parser(char *buffer, t_pipeline **pipeline, t_variable **variable)
 {
 	char		**line;
@@ -89,9 +139,9 @@ void	parser(char *buffer, t_pipeline **pipeline, t_variable **variable)
 		return (free_array(line));
 	//print_variable(variable);
 	expansion(pipeline, variable);
-	if (handle_files(pipeline) != 0 || handle_quotes(pipeline) != 0)
+	if (handle_quotes(pipeline) != 0)
 		return (free_array(line));
-	print_pipeline(pipeline);
+	//print_pipeline(pipeline);
 	free_array(line);
 }
 
@@ -121,7 +171,7 @@ int	main(int ac, char **av, char **envp)
 			load_variable(&variable, envp);
 		add_history(buffer);
 		parser(buffer, &pipeline, &variable);
-		//execute(&pipeline, &variable);
+		executer(&pipeline, &variable, envp);
 		free_pipeline(&pipeline);
 		free(buffer);
 		buffer = NULL;
