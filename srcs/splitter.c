@@ -17,67 +17,60 @@ bool	is_quote(char c)
 	return (c == '\'' || c == '\"');
 }
 
-int	count_tokens(char *s)
+int	get_token_length(char *s)
 {
-	size_t		i;
-	int			tokens;
-	bool		inside_token;
+	int		length;
+	char	quote;
 
-	i = 0;
-	tokens = 0;
-	while (i < ft_strlen(s))
+	length = 0;
+	quote = '\0';
+    while (s[length] && !is_whitespace(s[length]))
 	{
-		inside_token = false;
+		if (s[length] == '\'' || s[length] == '\"')
+		{
+			quote = s[length++];
+			while (s[length] && s[length] != quote)
+				length++;
+			if (s[length] == '\0')
+				return (0);
+			if (s[length] && is_quote(s[++length]))
+				continue ;
+		}
+		else if (is_heredoc(s + length))
+			return (2) ;
+		else if (is_redir(s[length]))
+			return (1) ;
+		else
+			length++;
+		if (s[length] && s[length + 1] && (is_heredoc(&s[length + 1]) || is_redir(s[length + 1])))
+			{
+				length++;
+				break ;
+			}
+	}
+	return (length);
+}
+
+int count_tokens(char *s)
+{
+	size_t 	i;
+	int 	tokens;
+	int		token_length;
+
+	i  = 0;
+	tokens = 0;
+	token_length = 0;
+	while (s[i])
+	{
 		while (s[i] && is_whitespace(s[i]))
 			i++;
-		while (s[i] && !is_whitespace(s[i]))
+		if (s[i])
 		{
-			if (s[i] == '\'')
-			{
-				i++;
-				while (s[i] && s[i] != '\'')
-					i++;
-				if (s[i] == '\0')
-					return (-1);
-				if (s[i] && is_quote(s[++i]))
-					continue ;
-				if (!inside_token)
-					tokens++;
-				inside_token = true;
-			}
-			else if (s[i] == '\"')
-			{
-				i++;
-				while (s[i] && s[i] != '\"')
-					i++;
-				if (s[i] == '\0')
-					return (-1);
-				if (s[i] && is_quote(s[++i]))
-					continue ;
-				if (!inside_token)
-					tokens++;
-				inside_token = true;
-			}
-			else if (is_heredoc(s + i))
-			{
-				tokens++;
-				i += 2;
-				break ;
-			}
-			else if (is_redir(s[i]))
-			{
-				tokens++;
-				i++;
-				break ;
-			}
-			else
-			{
-				if (inside_token == false)
-					tokens++;
-				inside_token = true;
-				if (s[i])
-					i++;
-			}
+			token_length = get_token_length(s + i);
+			if (token_length == 0)
+				return (-1);
+			tokens++;
+			i += token_length;
 		}
 	}
 	return (tokens);
@@ -89,10 +82,12 @@ char	**splitter(char *s)
 	int		len;
 	int		tokens;
 	char	**ret;
+	char	quote;
 
 	if (s == NULL)
 		return (NULL);
 	i = 0;
+	quote = '\0';
 	tokens = count_tokens(s);
 	if (tokens == -1)
 	{
@@ -113,18 +108,10 @@ char	**splitter(char *s)
 			s++;
 		while (s[len] && !is_whitespace(s[len]))
 		{
-			if (s[len] == '\'')
+			if (is_quote(s[len]))
 			{
-				len++;
-				while (s[len] && s[len] != '\'')
-					len++;
-				if (is_quote(s[++len]))
-					continue ;
-			}
-			else if (s[len] == '\"')
-			{
-				len++;
-				while (s[len] && s[len] != '\"')
+				quote = s[len++];
+				while (s[len] && s[len] != quote)
 					len++;
 				if (is_quote(s[++len]))
 					continue ;
@@ -141,6 +128,11 @@ char	**splitter(char *s)
 			}
 			else
 				len++;
+			if (s[len] && s[len + 1] && (is_heredoc(s + len + 1) || is_redir(s[len + 1])))
+			{
+				len++;
+				break ;
+			}
 		}
 		ret[i] = ft_substr(s, 0, len);
 		if (!ret[i])
