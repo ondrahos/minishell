@@ -87,6 +87,10 @@ void	executer(t_pipeline **pipeline, t_variable **variable, char **envp)
 	data.pipes = allocate_pipes(data.pipeline_count);
 	data.pids = allocate_pids(data.pipeline_count);
 	data.envp = envp;
+	if (data.pipeline_count == 0)
+	{
+		//execute_one(pipeline, data, i, variable);
+	}
 	while (i < data.pipeline_count)
 	{
 		if (pipe(data.pipes[i]) < 0)
@@ -101,9 +105,15 @@ void	executer(t_pipeline **pipeline, t_variable **variable, char **envp)
 			return (perror("Fork "));
 		if (data.pids[i] == 0)
 		{
-			close_pipes(data, i);
-			if (execute(pipeline, data, i, variable) == 1)
+			if (handle_files(pipeline) != 0)
 				return ;
+			if (i != data.pipeline_count)
+				dup2(data.pipes[i][1], STDOUT_FILENO);
+			if (i != 0)
+				dup2(data.pipes[i - 1][0], STDIN_FILENO);
+			close_all_pipes(data.pipes, data.pipeline_count - 1);
+			execute(pipeline, data, i, variable);
+			perror("Exec ");
 			break ;
 		}
 		i++;

@@ -6,7 +6,7 @@
 /*   By: ohosnedl <ohosnedl@student.42prague.com    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/04 21:06:56 by ohosnedl          #+#    #+#             */
-/*   Updated: 2024/04/07 14:59:53 by ohosnedl         ###   ########.fr       */
+/*   Updated: 2024/04/11 23:01:11 by ohosnedl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,44 +22,6 @@ void	close_all_pipes(int **pipes, int num)
 		close(pipes[i][0]);
 		close(pipes[i][1]);
 		i++;
-	}
-}
-
-void	close_pipes(t_data data, int pos)
-{
-	int	i;
-
-	i = 0;
-	if (pos == 0)
-	{
-		while (i < data.pipeline_count)
-		{
-			close(data.pipes[i][0]);
-			if (i != pos)
-				close(data.pipes[i][1]);
-			i++;
-		}
-	}
-	else if (pos == data.pipeline_count)
-	{
-		while (i < data.pipeline_count)
-		{
-			close(data.pipes[i][1]);
-			if (i != pos - 1)
-				close(data.pipes[i][0]);
-			i++;
-		}
-	}
-	else
-	{
-		while (i < data.pipeline_count)
-		{
-			if (i != pos - 1)
-				close(data.pipes[i][0]);
-			if (i != pos)
-				close(data.pipes[i][1]);
-			i++;
-		}
 	}
 }
 
@@ -213,29 +175,8 @@ int	execute(t_pipeline **pipeline, t_data data, int i, t_variable **variable)
 		tmp = tmp->next;
 		count++;
 	}
-	if (handle_files(pipeline) != 0)
-		return (1);
 	cmd = get_cmd(tmp);
 	path = get_path(tmp, variable);
-	dup2(tmp->in_fd, STDIN_FILENO);
-	dup2(tmp->out_fd, STDOUT_FILENO);
-	if (i == 0)
-	{
-		dup2(data.pipes[i][1], STDOUT_FILENO);
-		close(data.pipes[i][1]);
-	}
-	else if (i == data.pipeline_count)
-	{
-		dup2(data.pipes[i - 1][0], STDIN_FILENO);
-		close(data.pipes[i - 1][0]);
-	}
-	else
-	{
-		dup2(data.pipes[i - 1][0], STDIN_FILENO);
-		dup2(data.pipes[i][1], STDOUT_FILENO);
-		close(data.pipes[i - 1][0]);
-		close(data.pipes[i][1]);
-	}
 	execve(path, cmd, data.envp);
 	perror("Exec ");
 	return (0);

@@ -115,7 +115,6 @@ void		remove_quotes(t_token *token);
 int			count_pipelines(t_pipeline **pipeline);
 int			**allocate_pipes(int pipeline_count);
 int			*allocate_pids(int pipeline_count);
-void		close_pipes(t_data data, int pos);
 int			execute(t_pipeline **pipeline, t_data data, int i, t_variable **variable);
 void		print_array(char **arr);
 void		close_all_pipes(int **pipes, int num);
