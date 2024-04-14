@@ -74,10 +74,6 @@ int	handle_files(t_pipeline **pipeline)
 				return (1);
 			tmp_token = tmp_token->next;
 		}
-		if (tmp_pipe->in_fd == -42)
-			tmp_pipe->in_fd = STDIN_FILENO;
-		if (tmp_pipe->out_fd == -42)
-			tmp_pipe->out_fd = STDOUT_FILENO;
 		tmp_pipe = tmp_pipe->next;
 	}
 	return (0);

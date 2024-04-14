@@ -17,7 +17,7 @@ void	close_all_pipes(int **pipes, int num)
 	int	i;
 
 	i = 0;
-	while (i <= num)
+	while (i < num)
 	{
 		close(pipes[i][0]);
 		close(pipes[i][1]);
@@ -76,6 +76,7 @@ char	**allocate_cmd(t_token **token)
 	char	**cmd;
 
 	tmp = *token;
+	len = 0;
 	while (tmp && tmp->type != COMMAND)
 		tmp = tmp->next;
 	while (tmp && (tmp->type == COMMAND || tmp->type == ARGUMENT))
@@ -120,7 +121,6 @@ char	*find_path(t_token *token, char *path_var)
 	}
 	free(path);
 	free_array(paths);
-	token->type = COMMAND_ERR;
 	return (NULL);
 }
 
@@ -161,6 +161,46 @@ char	**get_cmd(t_pipeline *pipeline)
 	return (cmd);
 }
 
+void	dup_io(t_pipeline **pipeline, int i)
+{
+	t_pipeline	*tmp;
+	int			count;
+
+	tmp = *pipeline;
+	count = 0;
+	while (count != i)
+	{
+		tmp = tmp->next;
+		count++;
+	}
+	if (tmp->in_fd != 42)
+		dup2(tmp->in_fd, STDIN_FILENO);
+	if (tmp->out_fd != 42)
+		dup2(tmp->in_fd, STDOUT_FILENO);
+}
+
+void	execute_one(t_pipeline **pipeline, t_data data, t_variable **variable)
+{
+	int	pid;
+	int	original_stdin = dup(STDIN_FILENO);
+	int	original_stdout = dup(STDOUT_FILENO);
+
+	pid = fork();
+	if (pid == 0)
+	{
+		if ((*pipeline)->in_fd != -42)
+			dup2((*pipeline)->in_fd, STDIN_FILENO);
+		if ((*pipeline)->out_fd != -42)
+			dup2((*pipeline)->out_fd, STDOUT_FILENO);
+		execute(pipeline, data, 0, variable);
+	}
+	wait(NULL);
+	dup2(original_stdin, STDIN_FILENO);
+	dup2(original_stdout, STDOUT_FILENO);
+	close(original_stdin);
+	close(original_stdout);
+}
+
 int	execute(t_pipeline **pipeline, t_data data, int i, t_variable **variable)
 {
 	t_pipeline	*tmp;
@@ -177,7 +217,10 @@ int	execute(t_pipeline **pipeline, t_data data, int i, t_variable **variable)
 	}
 	cmd = get_cmd(tmp);
 	path = get_path(tmp, variable);
-	execve(path, cmd, data.envp);
+	if (path != NULL)
+		execve(path, cmd, data.envp);
 	perror("Exec ");
+	free_array(cmd);
+	free(path);
 	return (0);
 }
