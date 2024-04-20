@@ -115,7 +115,7 @@ void	executer(t_pipeline **pipeline, t_variable **variable, char **envp)
 				dup2(data.pipes[i - 1][0], STDIN_FILENO);
 			close_all_pipes(data.pipes, data.pipeline_count);
 			execute(pipeline, data, i, variable);
-			exit(EXIT_FAILURE);
+			exit(EXIT_FAILURE);;
 		}
 		i++;
 	}
@@ -144,7 +144,7 @@ void	parser(char *buffer, t_pipeline **pipeline, t_variable **variable)
 		return (free_array(line));
 	//print_variable(variable);
 	expansion(pipeline, variable);
-	if (handle_quotes(pipeline) != 0)
+	if (handle_quotes(pipeline) != 0 || handle_files(pipeline) != 0)
 		return (free_array(line));
 	handle_files(pipeline);
 	//print_pipeline(pipeline);
