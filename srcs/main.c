@@ -81,6 +81,8 @@ void	executer(t_pipeline **pipeline, t_variable **variable, char **envp)
 {
 	t_data	data;
 	int		i;
+	int		original_stdin = dup(STDIN_FILENO);
+	int		original_stdout = dup(STDOUT_FILENO);
 
 	i = 0;
 	data.pipeline_count = count_pipelines(pipeline) - 1;
@@ -89,7 +91,8 @@ void	executer(t_pipeline **pipeline, t_variable **variable, char **envp)
 	data.envp = envp;
 	if (data.pipeline_count == 0)
 	{
-		//execute_one(pipeline, data, i, variable);
+		execute_one(pipeline, data, variable);
+		return ;
 	}
 	while (i < data.pipeline_count)
 	{
@@ -105,26 +108,28 @@ void	executer(t_pipeline **pipeline, t_variable **variable, char **envp)
 			return (perror("Fork "));
 		if (data.pids[i] == 0)
 		{
-			if (handle_files(pipeline) != 0)
-				return ;
+			dup_io(pipeline, i);
 			if (i != data.pipeline_count)
 				dup2(data.pipes[i][1], STDOUT_FILENO);
 			if (i != 0)
 				dup2(data.pipes[i - 1][0], STDIN_FILENO);
-			close_all_pipes(data.pipes, data.pipeline_count - 1);
+			close_all_pipes(data.pipes, data.pipeline_count);
 			execute(pipeline, data, i, variable);
-			perror("Exec ");
-			break ;
+			exit(EXIT_FAILURE);
 		}
 		i++;
 	}
-	close_all_pipes(data.pipes, data.pipeline_count - 1);
+	close_all_pipes(data.pipes, data.pipeline_count);
 	i = 0;
-	while (i < data.pipeline_count)
+	while (i < data.pipeline_count + 1)
 	{
 		wait(NULL);
 		i++;
 	}
+	dup2(original_stdin, STDIN_FILENO);
+	dup2(original_stdout, STDOUT_FILENO);
+	close(original_stdin);
+	close(original_stdout);
 }
 
 void	parser(char *buffer, t_pipeline **pipeline, t_variable **variable)
@@ -141,6 +146,7 @@ void	parser(char *buffer, t_pipeline **pipeline, t_variable **variable)
 	expansion(pipeline, variable);
 	if (handle_quotes(pipeline) != 0)
 		return (free_array(line));
+	handle_files(pipeline);
 	//print_pipeline(pipeline);
 	free_array(line);
 }

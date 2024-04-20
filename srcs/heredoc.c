@@ -29,7 +29,7 @@ int	read_heredoc(char *eof)
 		line = readline("> ");
 		if (line == NULL || ft_strncmp(line, eof, ft_strlen(eof)) == 0)
 			break ;
-		write(fd, line, ft_strlen(line));
+		ft_putendl_fd(line, fd);
 		free(line);
 		line = NULL;
 	}

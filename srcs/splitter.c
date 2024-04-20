@@ -128,7 +128,7 @@ char	**splitter(char *s)
 			}
 			else
 				len++;
-			if (s[len] && s[len + 1] && (is_heredoc(s + len + 1) || is_redir(s[len + 1])))
+			if (s[len] && s[len + 1] && (is_heredoc(s + len + 1) || is_redir(s[len + 1])) && !is_whitespace(s[len]))
 			{
 				len++;
 				break ;
