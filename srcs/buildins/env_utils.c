@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   env_utils.c                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: daraz <daraz@student.42prague.com>         +#+  +:+       +#+        */
+/*   By: ohosnedl <ohosnedl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/28 15:28:15 by daraz             #+#    #+#             */
-/*   Updated: 2024/04/01 10:51:24 by daraz            ###   ########.fr       */
+/*   Updated: 2024/04/23 21:03:33 by ohosnedl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "build.h"
+#include "../../includes/minishell.h"
 
 //path error
 void	ft_path_error(void)
@@ -27,31 +27,19 @@ void	ft_malloc_error(void)
 }
 
 //search environment variable
-char	*ft_search_env_var(t_envs_lst **envs, char *name)
+char	*ft_search_env_var(t_variable **envs, char *name)
 {
-	t_envs_lst	*curr;
+	t_variable	*curr;
 
 	if (envs == NULL || *envs == NULL || name == NULL)
 		return (NULL);
 	curr = *envs;
 	while (curr)
 	{
-		if (ft_strncmp(curr->data->name, name,
-				ft_strlen(curr->data->name) + 1) == 0)
-			return (curr->data->value);
+		if (curr->name && ft_strncmp(curr->name, name,
+				ft_strlen(curr->name) + 1) == 0)
+			return (curr->value);
 		curr = curr->next;
 	}
 	return (NULL);
-}
-
-void	ft_free_envs(t_envs_lst **envs)
-{
-	t_envs_lst	*tmp;
-
-	while (envs && *envs)
-	{
-		tmp = (*envs)->next;
-		ft_remove_env_var(envs, (*envs)->data->name);
-		*envs = tmp;
-	}
 }

@@ -3,18 +3,18 @@
 /*                                                        :::      ::::::::   */
 /*   env.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: daraz <daraz@student.42prague.com>         +#+  +:+       +#+        */
+/*   By: ohosnedl <ohosnedl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 13:28:21 by daraz             #+#    #+#             */
-/*   Updated: 2024/03/29 14:10:10 by daraz            ###   ########.fr       */
+/*   Updated: 2024/04/23 20:22:42 by ohosnedl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "build.h"
+#include "../../includes/minishell.h"
 
-void	ft_env(t_pipeline *pipeline, t_envs_lst **envs)
+void	ft_env(t_pipeline *pipeline, t_variable **envs)
 {
-	t_envs_lst	*curr;
+	t_variable	*curr;
 
 	pipeline->exit_status = ER_NON;
 	if (envs == NULL)
@@ -22,9 +22,9 @@ void	ft_env(t_pipeline *pipeline, t_envs_lst **envs)
 	curr = *envs;
 	while (curr != NULL)
 	{
-		write(STDOUT_FILENO, curr->data->name, ft_strlen(curr->data->name));
+		write(STDOUT_FILENO, curr->name, ft_strlen(curr->name));
 		write(STDOUT_FILENO, "=", 1);
-		write(STDOUT_FILENO, curr->data->value, ft_strlen(curr->data->value));
+		write(STDOUT_FILENO, curr->value, ft_strlen(curr->value));
 		write(STDOUT_FILENO, "\n", 1);
 		curr = curr->next;
 	}
@@ -32,7 +32,7 @@ void	ft_env(t_pipeline *pipeline, t_envs_lst **envs)
 }
 
 /* int main(void)
-{   
+{
     t_pipeline *pipeline = malloc(sizeof(t_pipeline));
     if (pipeline == NULL) {
         return 1;
@@ -46,7 +46,7 @@ void	ft_env(t_pipeline *pipeline, t_envs_lst **envs)
     pipeline->append = false;
     pipeline->token = NULL;
     pipeline->next = NULL;
-    
+
     // 3 nejaky variably na test
     t_variable var1 = {"PATH", "/usr/bin", NULL};
     t_variable var2 = {"HOME", "/home/user", NULL};

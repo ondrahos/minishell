@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   export_utils.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: daraz <daraz@student.42prague.com>         +#+  +:+       +#+        */
+/*   By: ohosnedl <ohosnedl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/29 15:22:35 by daraz             #+#    #+#             */
-/*   Updated: 2024/03/29 16:27:51 by daraz            ###   ########.fr       */
+/*   Updated: 2024/04/23 20:23:04 by ohosnedl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "build.h"
+#include "../../includes/minishell.h"
 
 static char	**sort(char **tab, int size)
 {
@@ -37,10 +37,10 @@ static char	**sort(char **tab, int size)
 	return (tab);
 }
 
-static int	get_num_of_keys(t_envs_lst **envs)
+static int	get_num_of_keys(t_variable **envs)
 {
 	int			size;
-	t_envs_lst	*curr;
+	t_variable	*curr;
 
 	size = 0;
 	curr = *envs;
@@ -64,12 +64,12 @@ void	ft_free_sorted_keys(char **keys, int size)
 	free(keys);
 }
 
-char	**ft_get_sorted_keys(t_envs_lst **envs)
+char	**ft_get_sorted_keys(t_variable **envs)
 {
 	char		**keys;
 	int			size;
 	int			i;
-	t_envs_lst	*curr;
+	t_variable	*curr;
 
 	if (envs == NULL)
 		return (NULL);
@@ -81,7 +81,7 @@ char	**ft_get_sorted_keys(t_envs_lst **envs)
 	curr = *envs;
 	while (++i > -1 && curr)
 	{
-		keys[i] = ft_strjoin(curr->data->name, "");
+		keys[i] = ft_strjoin(curr->name, "");
 		if (keys[i] == NULL)
 			ft_malloc_error();
 		curr = curr->next;
@@ -90,12 +90,12 @@ char	**ft_get_sorted_keys(t_envs_lst **envs)
 	return (sort(keys, size));
 }
 
-void	ft_handle_export_error(t_pipeline *pipeline, t_envs_lst **envs,
-	t_token *token)
+void	ft_handle_export_error(t_pipeline *pipeline, t_variable **envs,
+	char *arg)
 {
 	pipeline->exit_status = ER_MAIN;
 	ft_putstr_fd(ft_search_env_var(envs, "USER"), STDERR_FILENO);
 	ft_putstr_fd(": export: `", STDERR_FILENO);
-	ft_putstr_fd(token->value, STDERR_FILENO);
+	ft_putstr_fd(arg, STDERR_FILENO);
 	ft_putstr_fd("': not a valid identifier\n", STDERR_FILENO);
 }

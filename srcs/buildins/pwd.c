@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   pwd.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: daraz <daraz@student.42prague.com>         +#+  +:+       +#+        */
+/*   By: ohosnedl <ohosnedl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/27 14:43:28 by daraz             #+#    #+#             */
-/*   Updated: 2024/03/29 14:12:59 by daraz            ###   ########.fr       */
+/*   Updated: 2024/04/23 20:23:19 by ohosnedl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "build.h"
+#include "../../includes/minishell.h"
 
 void	ft_pwd(t_pipeline *pipeline)
 {
@@ -26,7 +26,7 @@ void	ft_pwd(t_pipeline *pipeline)
 }
 
 /* int main() {
-	
+
     t_pipeline *pipeline = malloc(sizeof(t_pipeline));
     if (pipeline == NULL) {
         return 1;
@@ -40,10 +40,10 @@ void	ft_pwd(t_pipeline *pipeline)
     pipeline->append = false;
     pipeline->token = NULL;
     pipeline->next = NULL;
-	
+
     ft_pwd(pipeline);
 
 	free(pipeline);
-    
+
     return 0;
 } */

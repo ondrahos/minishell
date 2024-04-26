@@ -77,61 +77,6 @@ void	print_variable(t_variable **variable)
 	}
 }
 
-void	executer(t_pipeline **pipeline, t_variable **variable, char **envp)
-{
-	t_data	data;
-	int		i;
-	int		original_stdin = dup(STDIN_FILENO);
-	int		original_stdout = dup(STDOUT_FILENO);
-
-	i = 0;
-	data.pipeline_count = count_pipelines(pipeline) - 1;
-	data.pipes = allocate_pipes(data.pipeline_count);
-	data.pids = allocate_pids(data.pipeline_count);
-	data.envp = envp;
-	if (data.pipeline_count == 0)
-	{
-		execute_one(pipeline, data, variable);
-		return ;
-	}
-	while (i < data.pipeline_count)
-	{
-		if (pipe(data.pipes[i]) < 0)
-			return (perror("Pipe "));
-		i++;
-	}
-	i = 0;
-	while (i < data.pipeline_count + 1)
-	{
-		data.pids[i] = fork();
-		if (data.pids[i] < 0)
-			return (perror("Fork "));
-		if (data.pids[i] == 0)
-		{
-			dup_io(pipeline, i);
-			if (i != data.pipeline_count)
-				dup2(data.pipes[i][1], STDOUT_FILENO);
-			if (i != 0)
-				dup2(data.pipes[i - 1][0], STDIN_FILENO);
-			close_all_pipes(data.pipes, data.pipeline_count);
-			execute(pipeline, data, i, variable);
-			exit(EXIT_FAILURE);;
-		}
-		i++;
-	}
-	close_all_pipes(data.pipes, data.pipeline_count);
-	i = 0;
-	while (i < data.pipeline_count + 1)
-	{
-		wait(NULL);
-		i++;
-	}
-	dup2(original_stdin, STDIN_FILENO);
-	dup2(original_stdout, STDOUT_FILENO);
-	close(original_stdin);
-	close(original_stdout);
-}
-
 void	parser(char *buffer, t_pipeline **pipeline, t_variable **variable)
 {
 	char		**line;
@@ -144,9 +89,8 @@ void	parser(char *buffer, t_pipeline **pipeline, t_variable **variable)
 		return (free_array(line));
 	//print_variable(variable);
 	expansion(pipeline, variable);
-	if (handle_quotes(pipeline) != 0 || handle_files(pipeline) != 0)
+	if (handle_quotes(pipeline) != 0)
 		return (free_array(line));
-	handle_files(pipeline);
 	//print_pipeline(pipeline);
 	free_array(line);
 }
@@ -161,17 +105,18 @@ int	main(int ac, char **av, char **envp)
 	variable = NULL;
 	while (1)
 	{
+		ft_tty_mask();
+		ft_start_signals();
 		buffer = readline("$ minishell> ");
+		if (buffer == NULL)
+		{
+			write(1, "exit\n", 6);
+			break ;
+		}
 		if (ft_strncmp(buffer, "", 2) == 0)
 		{
 			free(buffer);
 			continue ;
-		}
-		if (ft_strncmp(buffer, "exit", 5) == 0 || buffer == NULL)
-		{
-			free(buffer);
-			buffer = NULL;
-			break ;
 		}
 		if (variable == NULL)
 			load_variable(&variable, envp);

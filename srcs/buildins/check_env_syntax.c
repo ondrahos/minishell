@@ -3,14 +3,14 @@
 /*                                                        :::      ::::::::   */
 /*   check_env_syntax.c                                 :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: daraz <daraz@student.42prague.com>         +#+  +:+       +#+        */
+/*   By: ohosnedl <ohosnedl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/28 16:25:26 by daraz             #+#    #+#             */
-/*   Updated: 2024/03/28 16:48:01 by daraz            ###   ########.fr       */
+/*   Updated: 2024/04/23 20:22:29 by ohosnedl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "build.h"
+#include "../../includes/minishell.h"
 
 static bool	starts_with_correct_char(char *value)
 {

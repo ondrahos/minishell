@@ -3,48 +3,48 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: daraz <daraz@student.42prague.com>         +#+  +:+       +#+        */
+/*   By: ohosnedl <ohosnedl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/29 14:43:37 by daraz             #+#    #+#             */
-/*   Updated: 2024/04/23 13:01:43 by daraz            ###   ########.fr       */
+/*   Updated: 2024/04/23 20:34:13 by ohosnedl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "build.h"
+#include "../../includes/minishell.h"
 
-static bool	check_eq_sign(t_token *token)
+static bool	check_eq_sign(char *arg)
 {
 	int	i;
 
 	i = 0;
-	while (token->value && token->value[i] != '\0')
+	while (arg[i])
 	{
-		if (token->value[i] == '=')
+		if (arg[i] == '=')
 			return (true);
 		i++;
 	}
 	return (false);
 }
 
-static bool	check_key_validity(t_token *token)
+static bool	check_key_validity(char *arg)
 {
 	int	i;
 
 	i = 0;
-	while (token->value && token->value[i] != '\0' && token->value[i] != '=')
+	while (arg[i] != '\0' && arg[i] != '=')
 		i++;
 	return (i > 0);
 }
 
-static void	handle_existing_key(t_envs_lst **envs, t_token *token)
+static void	handle_existing_key(t_variable **envs, char *arg)
 {
 	int		i;
 	char	*key;
 
 	i = 0;
-	while (token->value && token->value[i] != '=')
+	while (arg[i] && arg[i] != '=')
 		i++;
-	key = ft_substr(token->value, 0, i);
+	key = ft_substr(arg, 0, i);
 	if (key == NULL)
 		ft_malloc_error();
 	if (ft_search_env_var(envs, key) != NULL)
@@ -52,9 +52,9 @@ static void	handle_existing_key(t_envs_lst **envs, t_token *token)
 	free(key);
 }
 
-static void	handle_empty_export(t_envs_lst **envs)
+static void	handle_empty_export(t_variable **envs)
 {
-	t_envs_lst	*curr;
+	t_variable	*curr;
 	char		**keys;
 	int			i;
 
@@ -76,25 +76,28 @@ static void	handle_empty_export(t_envs_lst **envs)
 		ft_free_sorted_keys(keys, i);
 }
 
-void	ft_export(t_pipeline *pipeline, t_envs_lst **envs, t_token *token)
+void	ft_export(t_pipeline *pipeline, t_variable **envs, char **cmd)
 {
-	if (token == NULL || token->type != ARGUMENT)
+	int	i;
+
+	i = 1;
+	if (cmd[1] == NULL)
 		handle_empty_export(envs);
 	else
-	{		
-		while (token && token->value && token->type == ARGUMENT)
+	{
+		while (cmd[i])
 		{
-			if (!ft_check_env_syntax(token->value) || !check_key_validity(token))
-				ft_handle_export_error(pipeline, envs, token);
-			else if (!check_eq_sign(token))
+			if (!ft_check_env_syntax(cmd[i]) || !check_key_validity(cmd[i]))
+				ft_handle_export_error(pipeline, envs, cmd[i]);
+			else if (!check_eq_sign(cmd[i]))
 				pipeline->exit_status = ER_NON;
 			else
 			{
-				handle_existing_key(envs, token);
-				ft_add_env_var(envs, token->value);
+				handle_existing_key(envs, cmd[i]);
+				ft_add_env_var(envs, cmd[i]);
 				pipeline->exit_status = ER_NON;
 			}
-			token = token->next;
+			i++;
 		}
 	}
 }

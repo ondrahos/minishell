@@ -3,16 +3,16 @@
 /*                                                        :::      ::::::::   */
 /*   cd_utils.c                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: daraz <daraz@student.42prague.com>         +#+  +:+       +#+        */
+/*   By: ohosnedl <ohosnedl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/01 10:38:13 by daraz             #+#    #+#             */
-/*   Updated: 2024/04/01 10:57:13 by daraz            ###   ########.fr       */
+/*   Updated: 2024/04/23 20:22:17 by ohosnedl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "build.h"
+#include "../../includes/minishell.h"
 
-void	ft_handle_invalid_path(t_pipeline *pipeline, t_envs_lst **envs,
+void	ft_handle_invalid_path(t_pipeline *pipeline, t_variable **envs,
 	char *path_to_go)
 {
 	pipeline->exit_status = ER_MAIN;
@@ -22,7 +22,7 @@ void	ft_handle_invalid_path(t_pipeline *pipeline, t_envs_lst **envs,
 	ft_putstr_fd(": No such file or directory\n", STDERR_FILENO);
 }
 
-bool	ft_handle_empty_path(t_pipeline *pipeline, t_envs_lst **envs)
+bool	ft_handle_empty_path(t_pipeline *pipeline, t_variable **envs)
 {
 	char	*home_path;
 

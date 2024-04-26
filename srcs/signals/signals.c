@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../buildins/build.h"
+#include "../../includes/minishell.h"
 
 /* tady potrebujeme prenastavit terminal I/O controls.
 Kdyz se bude mackat ctrl+c tak by se nemelo printit do obrazovky.
@@ -49,10 +49,10 @@ void	ft_c_handle_fork(int sig)
 void	ft_slash_handle_fork(int sig)
 {
 	(void)sig;
-	write(1, "Quit: 3\n", 8);
+	write(1, "Quit (core dumped)\n", 20);
 }
 
-/* jelikoz mame minishell v shellu tak musime zamezit aby nam ctrk+c vypnulo 
+/* jelikoz mame minishell v shellu tak musime zamezit aby nam ctrk+c vypnulo
 nas minishell :D takze odchytime signal QUIT a ignorujeme ho IGN
 nasledne spustime handler s parametrem nasi funkce na ctrl + c,
 pravdepodobne pred dalsim loopem bude treba to dat znovu protoze ty signaly behem running shell muzeme zmenit*/
@@ -62,25 +62,23 @@ void	ft_start_signals(void)
 	signal(SIGINT, ft_c_handle);
 }
 
-/*
-bude treba udelat funkci nanastaveni signalu podle argumentu
-neco ve smyslu
-void	ft_set_signals(t_token *token)
+
+/* bude treba udelat funkci nanastaveni signalu podle argumentu
+neco ve smyslu */
+void	ft_set_signals(char **cmd)
 {
-	if (token->type == COMMAND && ft_strnstr(token->str, "minishell",
-			ft_strlen(token->str)))
+	if (ft_strncmp(cmd[0], "./minishell", 10) == 0)
 	{
 		signal(SIGQUIT, ft_sig_ignore);
 		signal(SIGINT, ft_sig_ignore);
 	}
-	if (token->type == COMMAND && ft_strnstr(token->str, "cat",
-			ft_strlen(token->str)))
+	if (ft_strncmp(cmd[0], "cat", 3) == 0)
 	{
 		signal(SIGINT, ft_c_handle_fork);
 		signal(SIGQUIT, ft_slash_handle_fork);
 	}
 }
-
+/*
 cat a heredoc me napadaji jako jediny kdy pobezi ten process
-bude treba to dat nekam pred vidlici executu binu, protoze tam uz bude treba 
-zaznamenavat zmeny, protoze na rozdil od build inu, tam jsou defaultni nastaveni*/
+bude treba to dat nekam pred vidlici executu binu, protoze tam uz bude treba
+zaznamenavat zmeny, protoze na rozdil od build inu, tam jsou defaultni nastaveni */

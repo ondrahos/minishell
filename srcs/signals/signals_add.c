@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../buildins/build.h"
+#include "../../includes/minishell.h"
 
 /* tady asi neni moc co vysvetlovat... do nothing...*/
 void	ft_sig_ignore(int sig)
@@ -24,6 +24,7 @@ signal(SIGINT, ft_sig_heredoc);  */
 void	ft_sig_heredoc(int sig)
 {
 	(void)sig;
+	unlink("here_doc");
 	exit(ER_MAIN);
 }
 
@@ -32,3 +33,4 @@ void	ft_sig_empty(int sig)
 	(void)sig;
 	write(1, "\n", 1);
 }
+
