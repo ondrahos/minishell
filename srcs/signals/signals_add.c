@@ -12,15 +12,11 @@
 
 #include "../../includes/minishell.h"
 
-/* tady asi neni moc co vysvetlovat... do nothing...*/
 void	ft_sig_ignore(int sig)
 {
 	(void)sig;
 }
 
-/* tady prave az budeme cekat na input behem here docku
-a zmackneme ctrl+c, bude treba zpracovat aby jenom exitnul here doc
-signal(SIGINT, ft_sig_heredoc);  */
 void	ft_sig_heredoc(int sig)
 {
 	(void)sig;
@@ -34,3 +30,16 @@ void	ft_sig_empty(int sig)
 	write(1, "\n", 1);
 }
 
+void	ft_set_signals(char **cmd)
+{
+	if (ft_strncmp(cmd[0], "./minishell", 10) == 0)
+	{
+		signal(SIGQUIT, ft_sig_ignore);
+		signal(SIGINT, ft_sig_ignore);
+	}
+	if (ft_strncmp(cmd[0], "cat", 3) == 0)
+	{
+		signal(SIGINT, ft_c_handle_fork);
+		signal(SIGQUIT, ft_slash_handle_fork);
+	}
+}

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   export.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohosnedl <ohosnedl@student.42.fr>          +#+  +:+       +#+        */
+/*   By: daraz <daraz@student.42prague.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/29 14:43:37 by daraz             #+#    #+#             */
-/*   Updated: 2024/04/23 20:34:13 by ohosnedl         ###   ########.fr       */
+/*   Updated: 2024/04/27 11:02:51 by daraz            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,70 +101,3 @@ void	ft_export(t_pipeline *pipeline, t_variable **envs, char **cmd)
 		}
 	}
 }
-
-
-
-/* void print_envs(t_envs_lst *envs) {
-    printf("Environment Variables:\n");
-    while (envs != NULL) {
-        printf("%s=%s\n", envs->data->name, envs->data->value);
-        envs = envs->next;
-    }
-    printf("\n");
-}
-
-int main() {
-
-    t_pipeline *pipeline = malloc(sizeof(t_pipeline));
-    if (pipeline == NULL) {
-        return 1;
-    }
-
-    pipeline->exit_status = ER_NON;
-    pipeline->line = NULL;
-    pipeline->in_fd = 0;
-    pipeline->out_fd = 1;
-    pipeline->here_doc = false;
-    pipeline->append = false;
-    pipeline->token = NULL;
-    pipeline->next = NULL;
-    // Create a linked list of environment variables
-    t_envs_lst *envs = NULL; // Initialize to empty list
-    // Add some initial environment variables for testing
-    ft_add_env_var(&envs, "VARIABLE_1=VALUE_1");
-    ft_add_env_var(&envs, "VARIABLE_2=VALUE_2");
-
-    // Print the initial contents of the environment variables list
-    printf("Before exporting:\n");
-    print_envs(envs);
-
-    // Create some tokens representing variables to export
-    t_token *token1 = malloc(sizeof(t_token));
-    token1->type = ARGUMENT;
-    token1->value = "VARIABLE_3=VALUE_3";
-    token1->free = false;
-
-    t_token *token2 = malloc(sizeof(t_token));
-    token2->type = ARGUMENT;
-    token2->value = "VARIABLE_4"; // Assuming this doesn't exist
-    token2->free = false;
-
-    // Link tokens together
-    token1->next = token2;
-    token2->next = NULL;
-
-    // Call ft_export function
-    ft_export(pipeline, &envs, token1); // Pass NULL for pipeline since it's not used
-
-    // Print the contents of the environment variables list after exporting
-    printf("After exporting:\n");
-    print_envs(envs);
-
-    // Free memory
-    //ft_free_envs(&envs);
-    //free(pipeline);
-    //free(token1);
-    //free(token2);
-
-    return 0;
-} */

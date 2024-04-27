@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohosnedl <ohosnedl@student.42.fr>          +#+  +:+       +#+        */
+/*   By: daraz <daraz@student.42prague.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/28 15:11:37 by daraz             #+#    #+#             */
-/*   Updated: 2024/04/26 20:44:46 by ohosnedl         ###   ########.fr       */
+/*   Updated: 2024/04/27 11:04:30 by daraz            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,7 +14,7 @@
 
 void	ft_unset(t_pipeline *pipeline, t_variable **envs, char **cmd)
 {
-	int i;
+	int	i;
 
 	i = 1;
 	while (cmd[i])

@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   env_utils_2.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohosnedl <ohosnedl@student.42.fr>          +#+  +:+       +#+        */
+/*   By: daraz <daraz@student.42prague.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/31 09:56:36 by daraz             #+#    #+#             */
-/*   Updated: 2024/04/23 21:05:46 by ohosnedl         ###   ########.fr       */
+/*   Updated: 2024/04/27 11:03:39 by daraz            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,6 @@ static void	free_env_var(t_variable	*curr)
 	free(curr);
 }
 
-//add environment variable
 void	ft_add_env_var(t_variable **envs, char *line)
 {
 	t_variable	*curr;
@@ -62,7 +61,6 @@ void	ft_add_env_var(t_variable **envs, char *line)
 	}
 }
 
-//remove environment variable
 void	ft_remove_env_var(t_variable **envs, char *name)
 {
 	t_variable	*curr;

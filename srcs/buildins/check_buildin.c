@@ -3,16 +3,17 @@
 /*                                                        :::      ::::::::   */
 /*   check_buildin.c                                    :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: ohosnedl <ohosnedl@student.42.fr>          +#+  +:+       +#+        */
+/*   By: daraz <daraz@student.42prague.com>         +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 18:09:38 by ohosnedl          #+#    #+#             */
-/*   Updated: 2024/04/26 19:51:24 by ohosnedl         ###   ########.fr       */
+/*   Updated: 2024/04/27 11:04:55 by daraz            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../../includes/minishell.h"
 
-bool	check_buildin(char **cmd, t_variable **variable, t_pipeline *pipeline, int pipe_count)
+bool	check_buildin(char **cmd, t_variable **variable,
+	t_pipeline *pipeline, int pipe_count)
 {
 	if (!cmd[0])
 		return (false);
