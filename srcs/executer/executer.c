@@ -29,13 +29,8 @@ int	fork_processes(t_data *data, t_pipeline **pipeline, t_variable **variable)
 	while (i < data->pipe_count + 1)
 	{
 		data->pids[i] = fork();
-		if (data->pids[i] < 0)
-		{
-			close_pipes(data->pipes, data->pipe_count);
-			free_data(data);
-			perror("Fork ");
+		if (safe_fork(data, i) == -1)
 			return (-1);
-		}
 		if (data->pids[i] == 0)
 		{
 			handle_files(pipeline, i);

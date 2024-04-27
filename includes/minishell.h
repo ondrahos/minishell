@@ -84,12 +84,11 @@ typedef struct s_pipeline
 	struct s_pipeline	*next;
 }	t_pipeline;
 
+//parser
 t_pipeline	*new_pipeline(void);
 void		init_pipeline(t_pipeline *pipeline);
 int			load_pipeline(char **line, t_pipeline **pipeline);
 void		tokenize_pipeline(t_pipeline **pipeline);
-void		free_pipeline(t_pipeline **pipeline);
-void		free_array(char **arr);
 void		load_token(char **line, t_token **token);
 t_token		*new_token(void);
 void		init_token(t_token *token);
@@ -99,14 +98,12 @@ char		*get_var(char *value, t_variable **variable);
 int			get_size(char *str);
 bool		is_whitespace(char c);
 bool		is_var(char *value);
-void		*free_lines(char **s, int i);
 bool		is_redir(char c);
 bool		is_heredoc(char *s);
 bool		is_delimiter(char *s);
 char		**splitter(char *s);
 int			handle_quotes(t_pipeline **pipeline);
 void		load_variable(t_variable **variable, char **envp);
-void		free_variable(t_variable **variable);
 char		*ft_getenv(char *name, t_variable **variable);
 int			handle_files(t_pipeline **pipeline, int i);
 int			check_pipes(char *line);
@@ -123,18 +120,18 @@ int			open_heredoc(t_pipeline *pipeline, char *eof);
 bool		has_quotes(char *s);
 int			check_quotes(t_token *token);
 void		remove_quotes(t_token *token);
+
+//executer
 int			count_pipes(t_pipeline **pipeline);
 int			**allocate_pipes(int pipeline_count);
 int			*allocate_pids(int pipeline_count);
 int			execute(t_pipeline **pipeline, t_data data,
 				int i, t_variable **variable);
-void		print_array(char **arr);
 void		close_pipes(int **pipes, int num);
 void		execute_one(t_pipeline **pipeline, t_data *data,
 				t_variable **variable);
 void		dup_io(t_pipeline **pipeline, int i);
 void		reset_io(int original_stdin, int original_stdout);
-void		free_data(t_data *data);
 void		data_init(t_data *data, char **envp, t_pipeline **pipeline);
 char		*get_path(t_pipeline *pipeline, t_variable **variable);
 char		**get_cmd(t_pipeline *pipeline);
@@ -142,6 +139,15 @@ int			count_tokens(char *s);
 bool		check_buildin(char **cmd, t_variable **variable,
 				t_pipeline *pipeline, int pipe_count);
 void		executer(t_pipeline **pipeline, t_variable **variable, char **envp);
+
+//cleanup
+void		free_pipeline(t_pipeline **pipeline);
+void		free_array(char **arr);
+void		*free_lines(char **s, int i);
+void		free_data(t_data *data);
+void		free_variable(t_variable **variable);
+
+//build-ins
 void		ft_cd(t_pipeline *pipeline, t_variable **envs, char **cmd);
 void		ft_echo(char **cmd, t_pipeline *pipeline);
 void		ft_env(t_pipeline *pipeline, t_variable **envs);
@@ -151,8 +157,9 @@ void		ft_export(t_pipeline *pipeline, t_variable **envs, char **cmd);
 void		ft_pwd(t_pipeline *pipeline);
 void		ft_unset(t_pipeline *pipeline, t_variable **envs, char **cmd);
 void		update_status(int status, t_variable **variable);
-void		print_variable(t_variable **variable);
 void		check_pipeline_status(t_data *data, t_pipeline **pipeline);
+int			safe_fork(t_data *data, int i);
+
 //env syntax
 bool		ft_check_env_syntax(char *value);
 

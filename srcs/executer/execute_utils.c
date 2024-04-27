@@ -66,3 +66,15 @@ void	data_init(t_data *data, char **envp, t_pipeline **pipeline)
 	data->original_stdout = dup(STDOUT_FILENO);
 	data->status = 0;
 }
+
+int	safe_fork(t_data *data, int i)
+{
+	if (data->pids[i] < 0)
+	{
+		close_pipes(data->pipes, data->pipe_count);
+		free_data(data);
+		perror("Fork ");
+		return (-1);
+	}
+	return (0);
+}

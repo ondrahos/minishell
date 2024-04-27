@@ -75,7 +75,11 @@ void	proccess_redirections(t_token *tmp, t_pipeline *pipeline,
 		tmp->type = IN_FILE;
 	else if ((i > 0 && ft_strncmp(line[i - 1], ">", 2) == 0)
 		|| (i > 0 && ft_strncmp(line[i - 1], ">>", 3) == 0))
+	{
 		tmp->type = OUT_FILE;
+		if (i > 0 && ft_strncmp(line[i - 1], ">", 2) == 0)
+			pipeline->append = false;
+	}
 }
 
 void	assign_type(char **line, t_token **token, t_pipeline *pipeline)

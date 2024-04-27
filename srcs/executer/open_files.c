@@ -80,22 +80,3 @@ int	handle_files(t_pipeline **pipeline, int i)
 	}
 	return (0);
 }
-
-// int	handle_files(t_pipeline **pipeline)
-// {
-// 	t_pipeline	*tmp_pipe;
-// 	t_token		*tmp_token;
-
-// 	tmp_pipe = *pipeline;
-// 	while (tmp_pipe)
-// 	{
-// 		tmp_token = tmp_pipe->token;
-// 		while (tmp_token)
-// 		{
-// 			proccess_files(tmp_token, tmp_pipe);
-// 			tmp_token = tmp_token->next;
-// 		}
-// 		tmp_pipe = tmp_pipe->next;
-// 	}
-// 	return (0);
-// }
