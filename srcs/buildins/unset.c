@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   unset.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: daraz <daraz@student.42prague.com>         +#+  +:+       +#+        */
+/*   By: ohosnedl <ohosnedl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/28 15:11:37 by daraz             #+#    #+#             */
-/*   Updated: 2024/04/27 11:04:30 by daraz            ###   ########.fr       */
+/*   Updated: 2024/04/29 20:36:42 by ohosnedl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,5 +34,4 @@ void	ft_unset(t_pipeline *pipeline, t_variable **envs, char **cmd)
 		}
 		i++;
 	}
-	pipeline->exit_status = ER_NON;
 }

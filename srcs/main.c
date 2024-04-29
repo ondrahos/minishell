@@ -20,6 +20,8 @@ int	parser(char *buffer, t_pipeline **pipeline, t_variable **variable)
 	if (load_pipeline(line, pipeline) != 0)
 		return (free_array(line), 1);
 	tokenize_pipeline(pipeline);
+	if (!(*pipeline)->token->value)
+		return (free_array(line), 1);
 	if (check_syntax(pipeline) != 0 || check_pipes(buffer) != 0)
 		return (free_array(line), 1);
 	expansion(pipeline, variable);

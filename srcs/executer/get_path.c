@@ -6,7 +6,7 @@
 /*   By: ohosnedl <ohosnedl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/21 19:49:27 by ohosnedl          #+#    #+#             */
-/*   Updated: 2024/04/26 16:08:21 by ohosnedl         ###   ########.fr       */
+/*   Updated: 2024/04/29 20:57:52 by ohosnedl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,8 @@ char	*find_relative_path(t_token *token, char *path_var)
 
 char	*find_path(t_token *token, char *path_var)
 {
+	if (!token)
+		return (NULL);
 	if (ft_strchr(token->value, '/'))
 		return (find_absolute_path(token));
 	return (find_relative_path(token, path_var));

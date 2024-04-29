@@ -32,6 +32,8 @@ void	ft_sig_empty(int sig)
 
 void	ft_set_signals(char **cmd)
 {
+	if (!cmd[0])
+		return ;
 	if (ft_strncmp(cmd[0], "./minishell", 10) == 0)
 	{
 		signal(SIGQUIT, ft_sig_ignore);

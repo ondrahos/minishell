@@ -52,6 +52,8 @@ bool	is_var(char *value)
 	int	i;
 
 	i = 0;
+	if (!value)
+		return (false);
 	while (value[i])
 	{
 		if (value[i] == '$')

@@ -104,8 +104,9 @@ int	execute(t_pipeline **pipeline, t_data data, int i, t_variable **variable)
 	path = get_path(tmp, variable);
 	if (path != NULL)
 		execve(path, cmd, data.envp);
-	perror("Command not found ");
-	free_array(cmd);
+	if (cmd[0])
+		perror("Command not found ");
 	free(path);
+	free_array(cmd);
 	return (1);
 }
