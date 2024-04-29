@@ -16,7 +16,7 @@ int	parser(char *buffer, t_pipeline **pipeline, t_variable **variable)
 {
 	char		**line;
 
-	line = ft_split(buffer, '|');
+	line = pipe_split(buffer, '|');
 	if (load_pipeline(line, pipeline) != 0)
 		return (free_array(line), 1);
 	tokenize_pipeline(pipeline);

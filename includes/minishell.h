@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   minishell.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: daraz <daraz@student.42prague.com>         +#+  +:+       +#+        */
+/*   By: ohosnedl <ohosnedl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/03/01 14:57:32 by ohosnedl          #+#    #+#             */
-/*   Updated: 2024/04/27 10:47:35 by daraz            ###   ########.fr       */
+/*   Updated: 2024/04/29 18:07:57 by ohosnedl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -85,6 +85,7 @@ typedef struct s_pipeline
 }	t_pipeline;
 
 //parser
+char		**pipe_split(char const *s, char c);
 t_pipeline	*new_pipeline(void);
 void		init_pipeline(t_pipeline *pipeline);
 int			load_pipeline(char **line, t_pipeline **pipeline);
