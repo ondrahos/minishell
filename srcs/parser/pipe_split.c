@@ -6,7 +6,7 @@
 /*   By: ohosnedl <ohosnedl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/29 18:07:23 by ohosnedl          #+#    #+#             */
-/*   Updated: 2024/04/29 18:14:53 by ohosnedl         ###   ########.fr       */
+/*   Updated: 2024/04/29 18:22:44 by ohosnedl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,14 +34,14 @@ static size_t	ft_count_words(const char *s, char c)
 	while (s[i] != 0)
 	{
 		quote = '\0';
+		if ((i == 0 || s[i - 1] == c) && s[i] != c)
+			words++;
 		if (s[i] == '\"' || s[i] == '\'')
 		{
 			quote = s[i++];
 			while (s[i] && s[i] != quote)
 				i++;
 		}
-		if ((i == 0 || s[i - 1] == c) && s[i] != c)
-			words++;
 		if (s[i])
 			i++;
 	}
