@@ -24,21 +24,23 @@ bool	is_in_squotes(char *s, int position)
 {
 	int		i;
 	bool	found;
+	char	quote;
 
 	i = 0;
 	found = false;
 	while (s[i])
 	{
-		if (s[i] == '\'')
+		if (is_quote(s[i]))
 		{
+			quote = s[i];
 			i++;
-			while (s[i] && s[i] != '\'')
+			while (s[i] && s[i] != quote)
 			{
 				if (i == position)
 					found = true;
 				i++;
 			}
-			if (s[i] != '\0' && found == true)
+			if (s[i] != '\0' && found == true && quote == '\'')
 				return (true);
 		}
 		if (s[i])

@@ -37,9 +37,12 @@ char	*extract_token(char *s, char **ret, int len, char quote)
 	{
 		if (is_quote(s[len]))
 		{
-			quote = s[len++];
+			while (s[len] && is_quote(s[len]))
+				quote = s[len++];
 			while (s[len] && s[len] != quote)
 				len++;
+			if (s[len] == '\0')
+				break ;
 			if (is_quote(s[++len]))
 				continue ;
 			break ;
@@ -107,11 +110,6 @@ char	**splitter(char *s)
 	if (s == NULL)
 		return (NULL);
 	tokens = count_tokens(s);
-	if (tokens == -1)
-	{
-		ft_putendl_fd("Syntax error: Unclosed quotes", STDERR_FILENO);
-		return (NULL);
-	}
 	ret = allocate_ret(tokens);
 	if (!ret)
 	{

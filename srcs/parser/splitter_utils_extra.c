@@ -16,13 +16,14 @@ int	get_token_length(char *s, int length, char quote)
 {
 	while (s[length] && !is_whitespace(s[length]))
 	{
-		if (s[length] == '\'' || s[length] == '\"')
+		if (is_quote(s[length]))
 		{
-			quote = s[length++];
+			while(s[length] && is_quote(s[length]))
+				quote = s[length++];
 			while (s[length] && s[length] != quote)
 				length++;
 			if (s[length] == '\0')
-				return (-1);
+				return (length);
 			if (s[length] && is_quote(s[++length]))
 				continue ;
 			return (length);
