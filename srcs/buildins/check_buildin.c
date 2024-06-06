@@ -6,7 +6,7 @@
 /*   By: ohosnedl <ohosnedl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/23 18:09:38 by ohosnedl          #+#    #+#             */
-/*   Updated: 2024/04/29 20:28:25 by ohosnedl         ###   ########.fr       */
+/*   Updated: 2024/05/09 18:10:30 by ohosnedl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,8 @@ bool	check_buildin(char **cmd, t_variable **variable,
 {
 	if (!cmd[0])
 		return (false);
-	if (ft_strncmp(cmd[0], "echo", 4) == 0 && ft_strncmp(cmd[1], "-n", 2) == 0)
+	if (ft_strncmp(cmd[0], "echo", 4) == 0 && cmd[1]
+		&& ft_strncmp(cmd[1], "-n", 2) == 0)
 		return (ft_echo(cmd, pipeline), true);
 	else if (ft_strncmp(cmd[0], "cd", 2) == 0)
 		return (ft_cd(pipeline, variable, cmd), true);

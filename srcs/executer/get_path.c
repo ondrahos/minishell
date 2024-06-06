@@ -6,7 +6,7 @@
 /*   By: ohosnedl <ohosnedl@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/04/21 19:49:27 by ohosnedl          #+#    #+#             */
-/*   Updated: 2024/04/29 20:57:52 by ohosnedl         ###   ########.fr       */
+/*   Updated: 2024/05/09 18:28:52 by ohosnedl         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,6 +64,8 @@ char	*get_path(t_pipeline *pipeline, t_variable **variable)
 	tmp_var = *variable;
 	while (tmp_var && ft_strncmp(tmp_var->name, "PATH", 5) != 0)
 		tmp_var = tmp_var->next;
+	if (!tmp_var)
+		return (NULL);
 	while (tmp_token && tmp_token->type != COMMAND)
 		tmp_token = tmp_token->next;
 	path = find_path(tmp_token, tmp_var->value);
